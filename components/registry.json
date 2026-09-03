@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-03",
+  "components": [
+    {
+      "id": "base-styles",
+      "name": "全局基础样式",
+      "status": "active",
+      "version": "1.0.0",
+      "path": "components/base.css",
+      "usedBy": [
+        "components/index.html"
+      ],
+      "notes": "统一维护色彩、字体、桌面端布局及基础组件样式；所有原型页面必须引用。"
+    },
+    {
+      "id": "app-sidebar",
+      "name": "侧边导航",
+      "status": "active",
+      "version": "1.0.0",
+      "path": "components/app-sidebar",
+      "usedBy": [
+        "components/index.html"
+      ],
+      "notes": "支持展开和收起状态、分组菜单、当前项高亮及导航事件；管理知识库与审核工作台为独立入口。"
+    },
+    {
+      "id": "app-header",
+      "name": "顶部栏",
+      "status": "active",
+      "version": "1.0.1",
+      "path": "components/app-header",
+      "usedBy": [
+        "components/index.html"
+      ],
+      "notes": "展示公司标识、产品名称、消息通知和个人账号入口，默认使用已提供的国家电网 Logo，支持侧栏收起状态。"
+    },
+    {
+      "id": "knowledge-table",
+      "name": "知识文件表格",
+      "status": "active",
+      "version": "1.0.0",
+      "path": "components/knowledge-table",
+      "usedBy": [
+        "components/index.html"
+      ],
+      "notes": "支持真实感知识文件数据、选择、行悬停、搜索过滤和预览、下载、AI速读及更多操作事件。"
+    }
+  ]
+}
