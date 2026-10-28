@@ -14,11 +14,11 @@
   --color-warning: #faad14;
   --color-error: #ff4d4f;
   --sidebar-width: 220px;
-  --sidebar-collapsed-width: 64px;
   --header-height: 56px;
   --content-padding: 24px;
   --control-height: 32px;
   --control-radius: 6px;
+  --button-radius: 2px;
   --modal-radius: 8px;
   --font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
 }
@@ -34,6 +34,12 @@ body {
   min-width: 1280px;
   min-height: 100%;
   margin: 0;
+}
+
+html.is-resizing-sidebar,
+html.is-resizing-sidebar * {
+  cursor: col-resize !important;
+  user-select: none !important;
 }
 
 body {
@@ -53,6 +59,10 @@ select,
 textarea {
   color: inherit;
   font: inherit;
+}
+
+button {
+  border-radius: var(--button-radius) !important;
 }
 
 a {
@@ -89,42 +99,27 @@ a:hover {
 
 .app-sidebar {
   position: fixed;
-  inset: 0 auto 0 0;
+  inset: var(--header-height) auto 0 0;
   z-index: 20;
   width: var(--sidebar-width);
   overflow-y: auto;
   background: var(--color-surface);
   border-right: 1px solid var(--color-divider);
-  transition: width 160ms ease;
 }
 
 .app-header {
   position: fixed;
-  inset: 0 0 auto var(--sidebar-width);
+  inset: 0 0 auto 0;
   z-index: 10;
   height: var(--header-height);
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-divider);
-  transition: left 160ms ease;
 }
 
 .app-content {
   min-height: 100vh;
   margin-left: var(--sidebar-width);
   padding: calc(var(--header-height) + var(--content-padding)) var(--content-padding) var(--content-padding);
-  transition: margin-left 160ms ease;
-}
-
-.app-shell.is-sidebar-collapsed .app-sidebar {
-  width: var(--sidebar-collapsed-width);
-}
-
-.app-shell.is-sidebar-collapsed .app-header {
-  left: var(--sidebar-collapsed-width);
-}
-
-.app-shell.is-sidebar-collapsed .app-content {
-  margin-left: var(--sidebar-collapsed-width);
 }
 
 .card {
@@ -147,7 +142,7 @@ a:hover {
   height: var(--control-height);
   padding: 0 16px;
   border: 1px solid var(--color-border);
-  border-radius: var(--control-radius);
+  border-radius: var(--button-radius);
   background: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;

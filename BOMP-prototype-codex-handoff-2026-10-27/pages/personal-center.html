@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识共享中心-个人中心</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../components/base.css?v=2.3.0">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="personal-center.css">
+</head>
+<body class="personal-body">
+  <bomp-sidebar id="appSidebar" active="recent-use"></bomp-sidebar>
+  <bomp-header id="appHeader" system-name="企业经营管理系统" system-code="BOMP" active-module="artificial-intelligence" user-name="孙鹏飞"></bomp-header>
+
+  <main class="prototype-main personal-main">
+    <section id="dashboardView">
+      <header class="personal-welcome">
+        <div>
+          <p>2026年9月4日 星期五</p>
+          <h1>下午好，孙鹏飞</h1>
+          <span>管理个人知识，继续处理最近的工作。</span>
+        </div>
+        <div class="welcome-actions">
+          <button class="btn" id="uploadButton" type="button"><span data-icon="uploadCloud"></span>上传文件</button>
+          <button class="btn" id="newDocumentButton" type="button"><span data-icon="filePenLine"></span>新建在线文档</button>
+          <button class="btn btn-primary" id="organizeButton" type="button"><span data-icon="folder"></span>本地文档整理</button>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <section class="workspace-panel recent-panel" id="recent-use" aria-labelledby="recentTitle">
+          <header class="panel-heading">
+            <div>
+              <h2 id="recentTitle">最近使用</h2>
+              <p>最近编辑、浏览和下载的知识文件</p>
+            </div>
+            <button class="text-link" id="recentAllButton" type="button">查看全部<span data-icon="chevronRight" data-icon-size="14"></span></button>
+          </header>
+          <div class="recent-overview-list" id="recentOverviewList"></div>
+        </section>
+
+        <section class="workspace-panel message-panel" id="my-messages" aria-labelledby="messageTitle">
+          <header class="panel-heading">
+            <div>
+              <h2 id="messageTitle">我的消息</h2>
+              <p>4 条未读消息</p>
+            </div>
+            <button class="text-link" id="messageAllButton" type="button">查看全部<span data-icon="chevronRight" data-icon-size="14"></span></button>
+          </header>
+          <div class="message-list">
+            <button class="message-item is-unread" type="button" data-message="rejected">
+              <span class="message-dot"></span>
+              <span><strong>知识提报被退回</strong><small>《采购管理办法》未通过审核，请根据意见修改后重新提交</small><time>10分钟前</time></span>
+            </button>
+            <button class="message-item is-unread" type="button" data-message="corrected">
+              <span class="message-dot"></span>
+              <span><strong>纠错反馈已处理</strong><small>你反馈的文件内容错误已修正</small><time>1小时前</time></span>
+            </button>
+            <button class="message-item" type="button" data-message="shared">
+              <span class="message-dot"></span>
+              <span><strong>收到新文件</strong><small>王建国向你分享了《项目验收材料》</small><time>昨天</time></span>
+            </button>
+            <button class="message-item" type="button" data-message="updated">
+              <span class="message-dot"></span>
+              <span><strong>协作文档已更新</strong><small>李娜更新了你参与的采购工作方案</small><time>2天前</time></span>
+            </button>
+          </div>
+          <footer class="panel-footer">
+            <button class="btn" id="messageFooterButton" type="button">查看全部消息</button>
+          </footer>
+        </section>
+
+        <section class="workspace-panel upload-panel" id="upload-tasks" aria-labelledby="uploadTaskTitle">
+          <header class="panel-heading">
+            <div>
+              <h2 id="uploadTaskTitle">上传任务</h2>
+              <p>文件解析、标引和异常处理进度</p>
+            </div>
+            <button class="text-link" id="uploadAllButton" type="button">查看全部<span data-icon="chevronRight" data-icon-size="14"></span></button>
+          </header>
+          <div class="task-list">
+            <div class="task-row">
+              <span class="task-icon is-running" data-icon="clock3"></span>
+              <div class="task-main">
+                <div><strong>正在解析</strong><span>采购业务资料，共12个文件</span><b>80%</b></div>
+                <div class="progress-track"><span style="width:80%"></span></div>
+              </div>
+            </div>
+            <div class="task-row">
+              <span class="task-icon is-pending" data-icon="circleCheck"></span>
+              <div class="task-main"><div><strong>待确认</strong><span>3个文件完成智能标引</span></div></div>
+              <button class="btn task-action" type="button" data-task-action="confirm">确认</button>
+            </div>
+            <div class="task-row">
+              <span class="task-icon is-error" data-icon="circleAlert"></span>
+              <div class="task-main"><div><strong>上传异常</strong><span>1个文件处理失败</span></div></div>
+              <button class="btn task-action" type="button" data-task-action="repair">处理</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-panel collaboration-panel" id="my-collaboration" aria-labelledby="collaborationTitle">
+          <header class="panel-heading">
+            <div>
+              <h2 id="collaborationTitle">协作与共享</h2>
+              <p>待参与和近期更新</p>
+            </div>
+            <button class="text-link" id="collaborationAllButton" type="button">查看全部<span data-icon="chevronRight" data-icon-size="14"></span></button>
+          </header>
+          <div class="collaboration-list">
+            <div class="collaboration-row">
+              <span class="collaboration-icon" data-icon="usersRound"></span>
+              <div><strong>王建国邀请你参与文档协作</strong><span>《2026年度采购工作方案》</span></div>
+              <button class="btn" type="button" data-collaboration-action="view">查看</button>
+            </div>
+            <div class="collaboration-row">
+              <span class="collaboration-icon" data-icon="rotateCcw"></span>
+              <div><strong>《年度总结材料》产生新版本</strong><span>李娜更新至 V1.6</span></div>
+              <button class="btn" type="button" data-collaboration-action="open">打开</button>
+            </div>
+            <div class="collaboration-row">
+              <span class="collaboration-icon" data-icon="circleCheck"></span>
+              <div><strong>《采购管理办法》提报已通过</strong><span>已发布至部门知识库</span></div>
+              <button class="btn" type="button" data-collaboration-action="detail">查看</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="personal-detail" id="detailView" hidden aria-labelledby="detailTitle">
+      <button class="back-button" id="backButton" type="button"><span data-icon="arrowLeft"></span>返回个人中心</button>
+      <div class="detail-header">
+        <span class="detail-file-icon" id="detailIcon">W</span>
+        <div>
+          <p id="detailPath">我的知识 / 项目资料</p>
+          <h1 id="detailTitle">2026年度采购工作方案</h1>
+          <span id="detailUpdated">10分钟前编辑</span>
+        </div>
+        <div class="detail-actions">
+          <button class="btn" type="button" data-detail-action="share"><span data-icon="share"></span>分享</button>
+          <button class="btn btn-primary" type="button" data-detail-action="edit"><span data-icon="filePenLine"></span>继续编辑</button>
+        </div>
+      </div>
+      <div class="detail-layout">
+        <article class="document-sheet">
+          <p class="document-number">国网物资有限公司内部资料</p>
+          <h2 id="documentTitle">2026年度采购工作方案</h2>
+          <p class="document-version">编制部门：采购管理部　版本：V1.3</p>
+          <h3>一、工作目标</h3>
+          <p>围绕年度物资保障任务，统筹采购计划、采购实施和履约协同，提升采购质效与风险防控能力。</p>
+          <h3>二、重点任务</h3>
+          <p>完善年度采购批次安排，强化采购需求规范性审查，推进供应商履约评价和异常风险闭环处置。</p>
+          <h3>三、进度安排</h3>
+          <p>按季度组织计划执行分析，及时协调处理采购实施与合同履约中的重点问题。</p>
+        </article>
+        <aside class="detail-meta-panel">
+          <h2>文件信息</h2>
+          <dl>
+            <div><dt>文档编号</dt><dd id="detailNumber">WZ-2026-CG-0012</dd></div>
+            <div><dt>文件类型</dt><dd id="detailType">工作方案</dd></div>
+            <div><dt>知识分类</dt><dd id="detailCategory">项目资料</dd></div>
+            <div><dt>所有者</dt><dd>孙鹏飞</dd></div>
+            <div><dt>当前版本</dt><dd id="detailVersion">V1.3</dd></div>
+            <div><dt>文件大小</dt><dd id="detailSize">1.8 MB</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast-success" id="feedbackToast" role="status" aria-live="polite" hidden>操作成功</div>
+
+  <div class="modal-mask" id="uploadModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="uploadModalTitle">上传文件</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body field-stack">
+        <button class="file-drop" id="chooseFileButton" type="button"><span data-icon="uploadCloud" data-icon-size="34"></span><strong id="selectedFileText">选择本地文件</strong><small>支持批量上传办公文档、图片和音视频</small></button>
+        <div class="field-block"><label for="uploadFolder">保存到</label><select class="form-control" id="uploadFolder"><option>我的知识 / 项目资料</option><option>我的知识 / 制度规范</option><option>我的知识 / 汇报材料</option></select></div>
+      </div>
+      <footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-primary" id="uploadSubmit" type="button">开始上传</button></footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="newDocumentModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="newDocumentTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="newDocumentTitle">新建在线文档</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body field-stack">
+        <div class="field-block"><label for="documentName">文档名称</label><input class="form-control" id="documentName" type="text" placeholder="输入文档名称"></div>
+        <div class="field-block"><label for="documentTemplate">文档模板</label><select class="form-control" id="documentTemplate"><option>空白文档</option><option>工作方案</option><option>会议纪要</option><option>项目报告</option></select></div>
+        <div class="field-block"><label for="documentFolder">保存到</label><select class="form-control" id="documentFolder"><option>我的知识 / 项目资料</option><option>我的知识 / 汇报材料</option></select></div>
+      </div>
+      <footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-primary" id="newDocumentSubmit" type="button">创建文档</button></footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="organizeModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="organizeTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="organizeTitle">本地文档整理</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body field-stack">
+        <div class="field-block"><label for="scanDirectory">扫描目录</label><input class="form-control" id="scanDirectory" value="D:\办公资料\采购管理" readonly></div>
+        <div class="organize-options"><label><input type="checkbox" checked>识别重复文件</label><label><input type="checkbox" checked>提取文档标签</label><label><input type="checkbox">同步到我的知识库</label></div>
+      </div>
+      <footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-primary" id="organizeSubmit" type="button">开始扫描</button></footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="recentModal" hidden>
+    <section class="modal modal-large list-modal" role="dialog" aria-modal="true" aria-labelledby="recentModalTitle">
+      <header class="modal-header modal-title-row">
+        <div><h2 class="modal-heading" id="recentModalTitle">全部最近使用</h2><p class="modal-description">共 8 条最近使用记录</p></div>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body">
+        <label class="modal-search"><span data-icon="search"></span><input class="form-control" id="recentSearch" type="search" placeholder="搜索文件名称或所在目录"></label>
+        <div class="recent-modal-list" id="recentModalList"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="messageModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="messageModalTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="messageModalTitle">全部消息</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body message-modal-list">
+        <button type="button"><strong>知识提报被退回</strong><span>请根据审核意见修改《采购管理办法》后重新提交</span><time>10分钟前</time></button>
+        <button type="button"><strong>纠错反馈已处理</strong><span>你反馈的供应商管理制度内容错误已修正</span><time>1小时前</time></button>
+        <button type="button"><strong>收到新文件</strong><span>王建国向你分享了《项目验收材料》</span><time>昨天</time></button>
+        <button type="button"><strong>协作文档已更新</strong><span>李娜更新了《2026年度采购工作方案》</span><time>2天前</time></button>
+        <button type="button"><strong>知识提报审核通过</strong><span>《部门采购管理规范》已发布至部门知识库</span><time>8月30日</time></button>
+      </div>
+      <footer class="modal-footer"><button class="btn btn-primary" id="markAllReadButton" type="button">全部标为已读</button></footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="taskModal" hidden>
+    <section class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+      <header class="modal-header modal-title-row"><h2 class="modal-heading" id="taskModalTitle">确认智能标引</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header>
+      <div class="modal-body"><p class="task-modal-copy" id="taskModalCopy">3个文件已完成摘要、分类和标签提取，确认后将进入我的知识库。</p></div>
+      <footer class="modal-footer"><button class="btn" type="button" data-modal-close>稍后处理</button><button class="btn btn-primary" id="taskSubmit" type="button">确认完成</button></footer>
+    </section>
+  </div>
+
+  <script src="../components/icons.js"></script>
+  <script src="../components/app-sidebar/component.js?v=4.5.1"></script>
+  <script src="../components/app-header/component.js?v=4.2.0"></script>
+  <script src="shared.js"></script>
+  <script src="personal-center.js"></script>
+</body>
+</html>

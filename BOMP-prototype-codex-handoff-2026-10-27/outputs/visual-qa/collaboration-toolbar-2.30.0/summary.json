@@ -1,0 +1,39 @@
+{
+  "checked": 3,
+  "failures": [],
+  "results": [
+    {
+      "width": 1280,
+      "viewSwitchCount": 0,
+      "filterLabels": [
+        "权限状态",
+        "类型"
+      ],
+      "hasReset": false,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1440,
+      "viewSwitchCount": 0,
+      "filterLabels": [
+        "权限状态",
+        "类型"
+      ],
+      "hasReset": false,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1920,
+      "viewSwitchCount": 0,
+      "filterLabels": [
+        "权限状态",
+        "类型"
+      ],
+      "hasReset": false,
+      "documentOverflow": 0,
+      "failures": []
+    }
+  ]
+}

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识共享中心-首页</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../components/base.css?v=2.2.0">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="home.css">
+</head>
+<body class="home-body">
+  <bomp-sidebar id="appSidebar" active="home"></bomp-sidebar>
+  <bomp-header id="appHeader" system-name="企业经营管理系统" system-code="BOMP" active-module="artificial-intelligence" user-name="孙鹏飞"></bomp-header>
+
+  <main class="prototype-main home-main" id="mainContent">
+    <section class="home-hero" aria-labelledby="homeTitle">
+      <div class="hero-copy">
+        <p class="hero-kicker">BOMP · 企业级知识服务平台</p>
+        <h1 id="homeTitle">知识共享中心</h1>
+        <p class="hero-slogan">让知识可沉淀、可查询、可协同，赋能业务，共创价值</p>
+        <p class="hero-date">2026年9月6日 星期日</p>
+      </div>
+      <div class="hero-scope" aria-label="知识服务范围">
+        <p>知识服务范围</p>
+        <div class="scope-items">
+          <span><i data-icon="building" data-icon-size="20" aria-hidden="true"></i><strong>公司知识</strong><small>制度与标准</small></span>
+          <span><i data-icon="network" data-icon-size="20" aria-hidden="true"></i><strong>部门知识</strong><small>专业经验</small></span>
+          <span><i data-icon="library" data-icon-size="20" aria-hidden="true"></i><strong>个人知识</strong><small>工作沉淀</small></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="home-content">
+      <section class="capability-section" aria-labelledby="capabilityTitle">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">核心能力</p>
+            <h2 id="capabilityTitle">让知识直接服务业务工作</h2>
+          </div>
+          <p>从内容生产、知识沉淀到协同编纂，一站式完成</p>
+        </div>
+        <div class="quick-actions" aria-label="核心功能">
+          <button class="quick-card quick-card-draft" type="button" data-quick-action="draft">
+            <span class="quick-index">01</span>
+            <span class="quick-visual" aria-hidden="true"><span data-icon="filePenLine" data-icon-size="28"></span></span>
+            <span class="quick-copy"><strong>智能起草材料</strong><small>智能生成汇报、通知、总结材料</small></span>
+            <span class="quick-arrow" data-icon="chevronRight" aria-hidden="true"></span>
+          </button>
+          <button class="quick-card quick-card-upload" type="button" data-quick-action="upload">
+            <span class="quick-index">02</span>
+            <span class="quick-visual" aria-hidden="true"><span data-icon="uploadCloud" data-icon-size="28"></span></span>
+            <span class="quick-copy"><strong>传知识</strong><small>上传资料，整理并共享知识成果</small></span>
+            <span class="quick-arrow" data-icon="chevronRight" aria-hidden="true"></span>
+          </button>
+          <button class="quick-card quick-card-collaborate" type="button" data-quick-action="collaborate">
+            <span class="quick-index">03</span>
+            <span class="quick-visual" aria-hidden="true"><span data-icon="usersRound" data-icon-size="28"></span></span>
+            <span class="quick-copy"><strong>在线协作</strong><small>多人在线编辑，共同完善文档</small></span>
+            <span class="quick-arrow" data-icon="chevronRight" aria-hidden="true"></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="assistant-section" aria-labelledby="assistantTitle">
+        <div class="assistant-heading">
+          <div class="assistant-title-wrap">
+            <span class="assistant-symbol" data-icon="sparkles" data-icon-size="22" aria-hidden="true"></span>
+            <div>
+              <h2 id="assistantTitle">智能知识助手</h2>
+              <p>基于您有权访问的知识内容生成可信回答</p>
+            </div>
+          </div>
+          <div class="entry-tabs" role="tablist" aria-label="助手模式">
+            <button class="entry-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="smartInput" data-mode="ai">智能问答</button>
+            <button class="entry-tab" type="button" role="tab" aria-selected="false" aria-controls="smartInput" data-mode="search">知识查询</button>
+          </div>
+        </div>
+
+        <div class="smart-entry">
+          <textarea id="smartInput" maxlength="5000" aria-label="描述您的知识查询或材料起草需求" placeholder="描述你的需求，AI帮你查知识、写材料、生成内容……"></textarea>
+          <div class="entry-footer">
+            <button class="scope-select" id="scopeButton" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span data-icon="library" aria-hidden="true"></span>
+              <span id="scopeText">全范围知识库</span>
+              <span data-icon="chevronDown" data-icon-size="14" aria-hidden="true"></span>
+            </button>
+            <div class="entry-tools">
+              <button class="page-icon-button" id="attachButton" type="button" title="添加附件" aria-label="添加附件" data-icon="paperclip"></button>
+              <button class="page-icon-button" id="imageButton" type="button" title="添加图片" aria-label="添加图片" data-icon="image"></button>
+              <button class="send-button" id="sendButton" type="button" title="发送" aria-label="发送"><span data-icon="send"></span></button>
+            </div>
+          </div>
+          <div class="scope-menu" id="scopeMenu" role="menu" hidden>
+            <button type="button" role="menuitem" data-scope="全范围知识库">全范围知识库</button>
+            <button type="button" role="menuitem" data-scope="公司知识库">公司知识库</button>
+            <button type="button" role="menuitem" data-scope="部门知识库">部门知识库</button>
+            <button type="button" role="menuitem" data-scope="我的知识库">我的知识库</button>
+          </div>
+        </div>
+
+        <div class="prompt-row">
+          <span>快捷模板</span>
+          <div class="prompt-chips" aria-label="常用模板">
+            <button type="button" data-prompt="会议纪要生成">会议纪要生成</button>
+            <button type="button" data-prompt="工作计划">工作计划</button>
+            <button type="button" data-prompt="周报撰写">周报撰写</button>
+            <button class="prompt-more" id="promptMore" type="button" title="更多模板" aria-label="展开更多模板" aria-expanded="false"><span data-icon="plus" data-icon-size="14"></span></button>
+            <span class="more-prompts" id="morePromptGroup" hidden>
+              <button type="button" data-prompt="合同条款总结">合同条款总结</button>
+              <button type="button" data-prompt="项目报告提纲">项目报告提纲</button>
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="recent-section" aria-labelledby="recentTitle">
+      <div class="recent-heading">
+        <div>
+          <h2 id="recentTitle">最近访问</h2>
+          <p>继续查看近期使用的知识文件</p>
+        </div>
+        <a href="search-results.html">查看全部 <span data-icon="chevronRight" data-icon-size="14"></span></a>
+      </div>
+      <div class="recent-list">
+        <a class="recent-item" href="search-results.html?q=物资采购管理办法">
+          <span class="recent-file file-pdf">PDF</span>
+          <span><strong>《国网物资有限公司物资采购管理办法（2024版）》</strong><small>制度规范 · 采购管理 · 昨天 16:42</small></span>
+        </a>
+        <a class="recent-item" href="search-results.html?q=企业经营管理系统">
+          <span class="recent-file file-word">W</span>
+          <span><strong>企业经营管理系统项目业务需求说明书</strong><small>项目文档 · 经营管理 · 9月2日 10:18</small></span>
+        </a>
+        <a class="recent-item" href="search-results.html?q=合同示范文本">
+          <span class="recent-file file-word">W</span>
+          <span><strong>《物资采购合同示范文本（2025年修订版）》</strong><small>合同范本 · 合同管理 · 8月29日 14:06</small></span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <button class="assistant-fab" id="assistantFab" type="button" title="智能助手" aria-label="唤起智能助手"><span data-icon="bot" data-icon-size="22"></span></button>
+  <div class="toast-success" id="feedbackToast" role="status" aria-live="polite" hidden>操作成功</div>
+
+  <div class="modal-mask" id="uploadModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="uploadTitle">上传知识</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body field-stack">
+        <div class="upload-drop">
+          <span data-icon="uploadCloud" data-icon-size="34"></span>
+          <strong>选择本地知识文件</strong>
+          <span>支持文档、图片、音视频及压缩包</span>
+          <button class="btn" type="button" id="chooseFileButton">选择文件</button>
+        </div>
+        <div class="field-block">
+          <label for="targetLibrary">提报知识库</label>
+          <select class="form-control" id="targetLibrary">
+            <option>我的知识库</option>
+            <option>部门知识库</option>
+            <option>公司知识库</option>
+          </select>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn" type="button" data-modal-close>取消</button>
+        <button class="btn btn-primary" type="button" id="uploadSubmit">开始上传</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="draftModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="draftTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="draftTitle">材料智能起草</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body field-stack">
+        <div class="field-block">
+          <label for="draftType">材料类型</label>
+          <select class="form-control" id="draftType">
+            <option>工作汇报</option>
+            <option>会议纪要</option>
+            <option>项目报告</option>
+            <option>通知公告</option>
+          </select>
+        </div>
+        <div class="field-block">
+          <label for="draftNeed">起草需求</label>
+          <textarea class="form-control" id="draftNeed" placeholder="输入主题、使用场景和篇幅要求"></textarea>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn" type="button" data-modal-close>取消</button>
+        <button class="btn btn-primary" type="button" id="draftSubmit">生成初稿</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="answerModal" hidden>
+    <section class="modal modal-large answer-modal" role="dialog" aria-modal="true" aria-labelledby="answerTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="answerTitle">智能问答</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body">
+        <p class="answer-question" id="answerQuestion"></p>
+        <div class="answer-content">
+          <h3>办理要点</h3>
+          <ol>
+            <li>先确认采购事项已纳入采购计划，并完成需求部门内部审批。</li>
+            <li>根据采购金额和事项类别匹配审批层级，准备需求说明、预算依据及技术文件。</li>
+            <li>提交采购管理部门复核，通过后进入采购方式确定与实施环节。</li>
+          </ol>
+          <p class="ai-note">内容由 AI 生成，请结合引用文件核验后使用。</p>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <a class="btn" href="search-results.html?q=零星采购审批流程">查看引用知识</a>
+        <button class="btn btn-primary" type="button" data-modal-close>知道了</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="collaborationModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="collaborationTitle">
+      <header class="modal-header modal-title-row">
+        <h2 class="modal-heading" id="collaborationTitle">在线协作</h2>
+        <button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button>
+      </header>
+      <div class="modal-body">
+        <p class="collaboration-lead">选择近期协作文档，继续与团队共同编纂。</p>
+        <div class="collaboration-list" role="list">
+          <button type="button" role="listitem" data-collaboration-file="供应商履约评价工作指引（修订稿）">
+            <span class="collaboration-icon" data-icon="filePenLine" aria-hidden="true"></span>
+            <span><strong>供应商履约评价工作指引（修订稿）</strong><small>采购管理处 · 6人协作 · 10分钟前更新</small></span>
+            <span data-icon="chevronRight" data-icon-size="16" aria-hidden="true"></span>
+          </button>
+          <button type="button" role="listitem" data-collaboration-file="2026年度物资采购工作计划">
+            <span class="collaboration-icon" data-icon="fileText" aria-hidden="true"></span>
+            <span><strong>2026年度物资采购工作计划</strong><small>综合计划处 · 4人协作 · 昨天更新</small></span>
+            <span data-icon="chevronRight" data-icon-size="16" aria-hidden="true"></span>
+          </button>
+          <button type="button" role="listitem" data-collaboration-file="企业经营管理系统项目总结报告">
+            <span class="collaboration-icon" data-icon="presentation" aria-hidden="true"></span>
+            <span><strong>企业经营管理系统项目总结报告</strong><small>数字化部 · 8人协作 · 9月4日更新</small></span>
+            <span data-icon="chevronRight" data-icon-size="16" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn" type="button" data-modal-close>取消</button>
+        <button class="btn btn-primary" type="button" id="createCollaboration">新建协作文档</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="../components/icons.js"></script>
+  <script src="../components/app-sidebar/component.js?v=4.3.0"></script>
+  <script src="../components/app-header/component.js?v=4.1.1"></script>
+  <script src="shared.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

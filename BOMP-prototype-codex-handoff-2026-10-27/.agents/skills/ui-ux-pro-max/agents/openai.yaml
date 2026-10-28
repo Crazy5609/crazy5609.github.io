@@ -1,0 +1,7 @@
+interface:
+  display_name: "UI/UX Pro Max"
+  short_description: "跨项目 UI/UX 设计、评审、无障碍与前端实现指南"
+  default_prompt: "Use $ui-ux-pro-max to design or review this interface with project-aware UI/UX guidance."
+
+policy:
+  allow_implicit_invocation: true

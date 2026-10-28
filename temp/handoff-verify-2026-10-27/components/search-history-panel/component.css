@@ -1,0 +1,127 @@
+:host {
+  display: block;
+  min-width: 0;
+  height: 100%;
+  border-left: 1px solid var(--color-divider, #f0f0f0);
+  background: #fbfcfc;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+button {
+  border-radius: 2px !important;
+  font: inherit;
+}
+
+.history-panel {
+  min-height: 100%;
+  padding: 18px 16px;
+}
+
+header {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px 12px;
+  border-bottom: 1px solid #e8eceb;
+}
+
+h2 {
+  margin: 0;
+  color: #27302f;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.collapse-button {
+  display: inline-flex;
+  height: 30px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 7px;
+  border: 0;
+  color: var(--color-primary, #1f827a);
+  background: transparent;
+  cursor: pointer;
+}
+
+.collapse-button:hover,
+.collapse-button:focus-visible {
+  background: var(--color-primary-subtle, #edf7f5);
+}
+
+.collapse-button:focus-visible,
+.history-item:focus-visible {
+  outline: 2px solid var(--color-primary, #1f827a);
+  outline-offset: 2px;
+}
+
+.history-list {
+  display: grid;
+  gap: 4px;
+  padding-top: 10px;
+}
+
+.history-item {
+  display: grid;
+  width: 100%;
+  min-height: 58px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  overflow: hidden;
+  border: 0;
+  color: #4f5958;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.history-item:hover,
+.history-item.is-active {
+  color: var(--color-primary-active, #156b64);
+  background: var(--color-primary-subtle, #edf7f5);
+}
+
+.history-icon {
+  display: inline-flex;
+  color: #8a9492;
+}
+
+.history-item.is-active .history-icon {
+  color: var(--color-primary, #1f827a);
+}
+
+.history-copy {
+  min-width: 0;
+}
+
+.history-copy strong,
+.history-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-copy strong {
+  color: inherit;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.history-copy small {
+  margin-top: 3px;
+  color: #8a9492;
+  font-size: 12px;
+}

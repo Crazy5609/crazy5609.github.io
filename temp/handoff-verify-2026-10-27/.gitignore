@@ -1,0 +1,6 @@
+.artifacts/
+.cache/
+.tmp/
+node_modules/
+dist/
+*.log

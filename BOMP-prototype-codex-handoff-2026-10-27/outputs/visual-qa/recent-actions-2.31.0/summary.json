@@ -1,0 +1,42 @@
+{
+  "checked": 3,
+  "failures": [],
+  "results": [
+    {
+      "width": 1280,
+      "headerAlign": "center",
+      "cellAlign": "center",
+      "paddingLeft": "12px",
+      "paddingRight": "12px",
+      "actionGap": "8px",
+      "actionJustify": "center",
+      "centerDelta": 0,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1440,
+      "headerAlign": "center",
+      "cellAlign": "center",
+      "paddingLeft": "12px",
+      "paddingRight": "12px",
+      "actionGap": "8px",
+      "actionJustify": "center",
+      "centerDelta": 0,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1920,
+      "headerAlign": "center",
+      "cellAlign": "center",
+      "paddingLeft": "12px",
+      "paddingRight": "12px",
+      "actionGap": "8px",
+      "actionJustify": "center",
+      "centerDelta": 0,
+      "documentOverflow": 0,
+      "failures": []
+    }
+  ]
+}

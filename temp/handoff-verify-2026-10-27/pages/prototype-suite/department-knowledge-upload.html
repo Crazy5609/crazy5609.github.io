@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BOMP-上传部门知识</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../components/base.css?v=2.2.0">
+  <link rel="stylesheet" href="suite.css?v=2.14.0">
+  <link rel="stylesheet" href="department-knowledge-upload.css?v=1.1.0">
+</head>
+<body class="department-upload-page">
+  <a class="skip-link" href="#uploadMain">跳到上传内容</a>
+  <bomp-sidebar id="appSidebar" active="department-library-management"></bomp-sidebar>
+  <bomp-header id="appHeader" active-module="knowledge-sharing"></bomp-header>
+
+  <main class="prototype-main suite-main" id="uploadMain">
+    <section class="suite-page upload-workbench" aria-labelledby="pageTitle">
+      <header class="upload-page-header">
+        <div>
+          <nav class="upload-breadcrumb" aria-label="面包屑">
+            <a href="knowledge-management.html">部门知识库管理</a>
+            <span aria-hidden="true">/</span>
+            <span>上传知识</span>
+          </nav>
+          <div class="upload-title-row">
+            <button class="icon-button" type="button" data-exit-upload aria-label="返回知识管理" title="返回知识管理">
+              <span data-icon="arrowLeft"></span>
+            </button>
+            <div>
+              <h1 class="page-title" id="pageTitle">上传部门知识</h1>
+              <p>上传、智能处理并确认标引信息，提交后进入部门知识审核。</p>
+            </div>
+          </div>
+        </div>
+        <div class="upload-header-actions">
+          <span class="role-badge"><span data-icon="user"></span>部门知识库管理员</span>
+          <button class="btn" type="button" data-save-draft>保存草稿</button>
+          <button class="btn" type="button" data-exit-upload>退出上传</button>
+        </div>
+      </header>
+
+      <nav class="workflow-steps" aria-label="上传进度">
+        <button class="workflow-step is-current" type="button" data-step-target="1" aria-current="step">
+          <span class="step-number">1</span>
+          <span><strong>选择文件</strong><small>确定目录与上传范围</small></span>
+        </button>
+        <button class="workflow-step" type="button" data-step-target="2" disabled>
+          <span class="step-number">2</span>
+          <span><strong>智能处理</strong><small>查重、命名与内容解析</small></span>
+        </button>
+        <button class="workflow-step" type="button" data-step-target="3" disabled>
+          <span class="step-number">3</span>
+          <span><strong>标引确认</strong><small>核对标签与基础信息</small></span>
+        </button>
+        <button class="workflow-step" type="button" data-step-target="4" disabled>
+          <span class="step-number">4</span>
+          <span><strong>提交结果</strong><small>进入部门审核环节</small></span>
+        </button>
+      </nav>
+
+      <section class="workflow-panel" data-step-panel="1" aria-labelledby="stepOneTitle">
+        <div class="panel-heading">
+          <div>
+            <h2 id="stepOneTitle">选择待入库文件</h2>
+            <p>本次任务将上传到当前管理员所属部门，知识层级固定为部门级。</p>
+          </div>
+          <span class="file-count" id="selectedCount">已选择 8 个文件</span>
+        </div>
+
+        <div class="scope-bar" aria-label="上传范围">
+          <div class="scope-item">
+            <span>目标知识库</span>
+            <strong>供应链运营中心知识库</strong>
+          </div>
+          <div class="scope-item">
+            <span>知识层级</span>
+            <strong>部门级</strong>
+          </div>
+          <label class="scope-item scope-select" for="targetDirectory">
+            <span><i>*</i>目标目录</span>
+            <select class="form-control" id="targetDirectory" required>
+              <option value="">请选择部门知识库目录</option>
+              <option value="数字化需求管理/数字化项目建设资料" selected>数字化需求管理 / 数字化项目建设资料</option>
+              <option value="架构管理/供应链业务架构管理">架构管理 / 供应链业务架构管理</option>
+              <option value="供应链平台运营/运营体系建设">供应链平台运营 / 运营体系建设</option>
+              <option value="报告汇报文件/部门年度总结">报告汇报文件 / 部门年度总结</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="upload-dropzone" id="uploadDropzone" for="filePicker" tabindex="0">
+          <span class="dropzone-icon" data-icon="uploadCloud"></span>
+          <span class="dropzone-copy">
+            <strong>拖放文件到此处，或点击选择文件</strong>
+            <small>支持 DOCX、PDF、XLSX、PPTX、JPG、MP4，单个文件不超过 200 MB</small>
+          </span>
+          <span class="btn btn-primary">选择文件</span>
+          <input id="filePicker" type="file" multiple accept=".doc,.docx,.pdf,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4" hidden>
+        </label>
+
+        <div class="workflow-table-wrap">
+          <table class="workflow-table file-selection-table">
+            <colgroup><col class="col-check"><col class="col-name"><col class="col-type"><col class="col-size"><col class="col-directory"><col class="col-actions"></colgroup>
+            <thead>
+              <tr>
+                <th class="checkbox-column"><input id="selectAllFiles" type="checkbox" checked aria-label="选择全部文件"></th>
+                <th>文件名称</th>
+                <th>文件类型</th>
+                <th>文件大小</th>
+                <th>目标目录</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="selectedFileRows"></tbody>
+          </table>
+        </div>
+
+        <footer class="panel-actions">
+          <p id="stepOneError" class="inline-error" role="alert" hidden></p>
+          <button class="btn" type="button" data-exit-upload>取消</button>
+          <button class="btn btn-primary" type="button" data-next-step="2">开始智能处理 <span data-icon="chevronRight"></span></button>
+        </footer>
+      </section>
+
+      <section class="workflow-panel" data-step-panel="2" aria-labelledby="stepTwoTitle" hidden>
+        <div class="panel-heading">
+          <div>
+            <h2 id="stepTwoTitle">智能处理结果</h2>
+            <p>系统已完成格式检查、重复校验、命名检查、内容解析和智能标引。</p>
+          </div>
+          <span class="processing-time"><span data-icon="clock3"></span>本次处理用时 01:42</span>
+        </div>
+
+        <div class="processing-summary" aria-label="处理结果统计">
+          <div><span>文件总数</span><strong id="totalProcessingCount">8</strong></div>
+          <div class="success"><span>处理完成</span><strong id="completedProcessingCount">6</strong></div>
+          <div class="warning"><span>待处理提醒</span><strong id="issueProcessingCount">2</strong></div>
+          <div><span>解析进度</span><strong id="processingPercent">100%</strong></div>
+        </div>
+
+        <div class="processing-progress" aria-label="解析进度 100%"><span style="width:100%"></span></div>
+
+        <div class="workflow-table-wrap">
+          <table class="workflow-table processing-table">
+            <colgroup><col class="col-name"><col class="col-check-result"><col class="col-check-result"><col class="col-check-result"><col class="col-check-result"><col class="col-suggestion"></colgroup>
+            <thead>
+              <tr>
+                <th>文件名称</th>
+                <th>格式检查</th>
+                <th>重复校验</th>
+                <th>命名检查</th>
+                <th>智能标引</th>
+                <th>处理建议</th>
+              </tr>
+            </thead>
+            <tbody id="processingRows"></tbody>
+          </table>
+        </div>
+
+        <div class="error-summary" id="processingErrorSummary" role="alert" tabindex="-1" hidden>
+          <strong>还有待处理提醒</strong>
+          <span>请处理疑似重复文件和命名问题后，再进入标引确认。</span>
+        </div>
+
+        <footer class="panel-actions">
+          <button class="btn" type="button" data-previous-step="1"><span data-icon="chevronLeft"></span> 上一步</button>
+          <button class="btn btn-primary" type="button" data-next-step="3">进入标引确认 <span data-icon="chevronRight"></span></button>
+        </footer>
+      </section>
+
+      <section class="workflow-panel metadata-panel" data-step-panel="3" aria-labelledby="stepThreeTitle" hidden>
+        <div class="panel-heading metadata-heading">
+          <div>
+            <h2 id="stepThreeTitle">核对标引信息</h2>
+            <p>AI 推荐内容仅作辅助，请逐项核对后提交部门审核。</p>
+          </div>
+          <button class="btn" type="button" data-open-batch><span data-icon="filePenLine"></span> 批量修改</button>
+        </div>
+
+        <div class="metadata-layout">
+          <aside class="metadata-file-panel" aria-label="待确认文件">
+            <div class="metadata-file-header">
+              <strong>待确认文件</strong>
+              <span id="metadataCheckedCount">8 / 8</span>
+            </div>
+            <label class="metadata-search" for="metadataSearch">
+              <span class="visually-hidden">搜索文件</span>
+              <input id="metadataSearch" type="search" placeholder="搜索文件名称">
+              <span data-icon="search"></span>
+            </label>
+            <div class="metadata-file-list" id="metadataFileList"></div>
+          </aside>
+
+          <form class="metadata-form" id="metadataForm" novalidate>
+            <div class="metadata-form-title">
+              <div class="file-type-mark word" id="activeFileMark">W</div>
+              <div>
+                <strong id="activeFileName">国网物资公司数字化项目建设管理办法.docx</strong>
+                <small id="activeFileMeta">DOCX · 3.8 MB · AI 标引完成</small>
+              </div>
+              <span class="ai-tag"><span data-icon="sparkles"></span>AI 已推荐</span>
+            </div>
+
+            <div class="metadata-fields">
+              <label class="field-group field-wide" for="documentTitle">
+                <span class="field-label is-required">知识名称</span>
+                <input class="form-control" id="documentTitle" name="title" required>
+                <small>名称将用于知识库列表与检索结果展示</small>
+              </label>
+
+              <label class="field-group" for="departmentName">
+                <span class="field-label">所属部门</span>
+                <input class="form-control read-only-control" id="departmentName" value="供应链运营中心" readonly>
+              </label>
+
+              <label class="field-group" for="knowledgeLevel">
+                <span class="field-label">知识层级</span>
+                <input class="form-control read-only-control" id="knowledgeLevel" value="部门级" readonly>
+              </label>
+
+              <label class="field-group" for="metadataDirectory">
+                <span class="field-label is-required">所属目录</span>
+                <select class="form-control" id="metadataDirectory" name="directory" required>
+                  <option>数字化需求管理 / 数字化项目建设资料</option>
+                  <option>架构管理 / 供应链业务架构管理</option>
+                  <option>供应链平台运营 / 运营体系建设</option>
+                  <option>报告汇报文件 / 部门年度总结</option>
+                </select>
+              </label>
+
+              <label class="field-group" for="professionalTag">
+                <span class="field-label is-required">专业标签 <em>AI</em></span>
+                <select class="form-control" id="professionalTag" name="professional" required>
+                  <option>数字化管理</option>
+                  <option>计划管理</option>
+                  <option>项目管理</option>
+                  <option>供应链运营</option>
+                  <option>风险合规</option>
+                </select>
+              </label>
+
+              <label class="field-group" for="knowledgeType">
+                <span class="field-label is-required">知识类型 <em>AI</em></span>
+                <select class="form-control" id="knowledgeType" name="kind" required>
+                  <option>制度规范类</option>
+                  <option>模板范本类</option>
+                  <option>方案案例类</option>
+                  <option>报告汇报类</option>
+                  <option>培训宣贯类</option>
+                  <option>多媒体素材类</option>
+                  <option>风险合规类</option>
+                </select>
+              </label>
+
+              <label class="field-group" for="versionTag">
+                <span class="field-label is-required">版本</span>
+                <input class="form-control" id="versionTag" name="version" required>
+              </label>
+
+              <label class="field-group field-wide" for="keywords">
+                <span class="field-label is-required">关键词 <em>AI</em></span>
+                <input class="form-control" id="keywords" name="keywords" required>
+                <small>多个关键词使用中文顿号分隔</small>
+              </label>
+
+              <label class="field-group field-wide" for="documentSummary">
+                <span class="field-label is-required">文档摘要 <em>AI</em></span>
+                <textarea class="form-control" id="documentSummary" name="summary" rows="4" required></textarea>
+                <small><span id="summaryLength">0</span> / 300 字</small>
+              </label>
+
+              <label class="field-group" for="validityPeriod">
+                <span class="field-label">有效期</span>
+                <select class="form-control" id="validityPeriod" name="validity">
+                  <option>长期有效</option>
+                  <option>1 年</option>
+                  <option>2 年</option>
+                  <option>至 2027-12-31</option>
+                </select>
+              </label>
+
+              <fieldset class="field-group visibility-group">
+                <legend class="field-label is-required">可见范围</legend>
+                <label><input type="radio" name="visibility" value="本部门成员" checked> 本部门成员</label>
+                <label><input type="radio" name="visibility" value="指定成员"> 指定成员</label>
+              </fieldset>
+            </div>
+          </form>
+        </div>
+
+        <div class="error-summary" id="metadataErrorSummary" role="alert" tabindex="-1" hidden>
+          <strong>请补全必填信息</strong>
+          <span>当前文件存在未填写的必填字段。</span>
+        </div>
+
+        <footer class="panel-actions">
+          <button class="btn" type="button" data-previous-step="2"><span data-icon="chevronLeft"></span> 上一步</button>
+          <button class="btn btn-primary" type="button" data-open-submit>提交部门审核</button>
+        </footer>
+      </section>
+
+      <section class="workflow-panel result-panel" data-step-panel="4" aria-labelledby="stepFourTitle" hidden>
+        <div class="result-hero">
+          <span class="result-icon" data-icon="circleCheck"></span>
+          <h2 id="stepFourTitle">已提交部门审核</h2>
+          <p>8 个知识文件已进入审核队列，审核通过后将发布至供应链运营中心知识库。</p>
+        </div>
+
+        <dl class="result-summary">
+          <div><dt>任务编号</dt><dd>BM-ZS-20260910-0036</dd></div>
+          <div><dt>提交人</dt><dd>孙鹏飞</dd></div>
+          <div><dt>当前环节</dt><dd><span class="status-pill review">部门知识审核</span></dd></div>
+          <div><dt>提交时间</dt><dd>2026-09-10 16:28</dd></div>
+        </dl>
+
+        <div class="workflow-table-wrap result-table-wrap">
+          <table class="workflow-table result-table">
+            <colgroup><col class="col-name"><col class="col-type"><col class="col-directory"><col class="col-status"></colgroup>
+            <thead>
+              <tr><th>文件名称</th><th>知识类型</th><th>所属目录</th><th>提交状态</th></tr>
+            </thead>
+            <tbody id="resultRows"></tbody>
+          </table>
+        </div>
+
+        <footer class="panel-actions result-actions">
+          <button class="btn" type="button" data-restart-upload>继续上传</button>
+          <button class="btn btn-primary" type="button" data-back-management>返回知识管理</button>
+        </footer>
+      </section>
+    </section>
+  </main>
+
+  <div class="modal-mask" id="batchModal" hidden>
+    <section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="batchModalTitle">
+      <header class="modal-header modal-title-row">
+        <div>
+          <h2 id="batchModalTitle">批量修改标引信息</h2>
+          <p>将修改应用到左侧已勾选的文件。</p>
+        </div>
+        <button class="icon-button" type="button" data-close-modal aria-label="关闭批量修改" title="关闭"><span data-icon="x"></span></button>
+      </header>
+      <div class="modal-body batch-form">
+        <label class="field-group" for="batchProfessional">
+          <span class="field-label">专业标签</span>
+          <select class="form-control" id="batchProfessional">
+            <option value="">保持原值</option>
+            <option>数字化管理</option>
+            <option>计划管理</option>
+            <option>项目管理</option>
+            <option>供应链运营</option>
+          </select>
+        </label>
+        <label class="field-group" for="batchDirectory">
+          <span class="field-label">所属目录</span>
+          <select class="form-control" id="batchDirectory">
+            <option value="">保持原值</option>
+            <option>数字化需求管理 / 数字化项目建设资料</option>
+            <option>架构管理 / 供应链业务架构管理</option>
+            <option>供应链平台运营 / 运营体系建设</option>
+            <option>报告汇报文件 / 部门年度总结</option>
+          </select>
+        </label>
+        <label class="field-group" for="batchValidity">
+          <span class="field-label">有效期</span>
+          <select class="form-control" id="batchValidity">
+            <option value="">保持原值</option>
+            <option>长期有效</option>
+            <option>1 年</option>
+            <option>2 年</option>
+          </select>
+        </label>
+        <fieldset class="field-group batch-visibility">
+          <legend class="field-label">可见范围</legend>
+          <label><input type="radio" name="batchVisibility" value="" checked> 保持原值</label>
+          <label><input type="radio" name="batchVisibility" value="本部门成员"> 本部门成员</label>
+          <label><input type="radio" name="batchVisibility" value="指定成员"> 指定成员</label>
+        </fieldset>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn" type="button" data-close-modal>取消</button>
+        <button class="btn btn-primary" type="button" data-apply-batch>应用修改</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="submitModal" hidden>
+    <section class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="submitModalTitle">
+      <header class="modal-header modal-title-row">
+        <div>
+          <h2 id="submitModalTitle">确认提交部门审核</h2>
+          <p>提交后文件将进入部门知识审核队列。</p>
+        </div>
+        <button class="icon-button" type="button" data-close-modal aria-label="关闭提交确认" title="关闭"><span data-icon="x"></span></button>
+      </header>
+      <div class="modal-body submit-confirmation">
+        <div><span>提交文件</span><strong id="submitFileCount">8 个</strong></div>
+        <div><span>目标知识库</span><strong>供应链运营中心知识库</strong></div>
+        <div><span>下一环节</span><strong>部门知识库审核人</strong></div>
+        <p><span data-icon="circleAlert"></span>审核完成前，文件不会向普通访问者展示正文或附件。</p>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn" type="button" data-close-modal>取消</button>
+        <button class="btn btn-primary" type="button" data-confirm-submit>确认提交</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="toast-success" id="uploadToast" role="status" aria-live="polite" hidden></div>
+
+  <script src="../../components/icons.js"></script>
+  <script src="../../components/app-sidebar/component.js?v=4.3.0"></script>
+  <script src="../../components/app-header/component.js?v=4.1.1"></script>
+  <script src="department-knowledge-upload.js"></script>
+</body>
+</html>

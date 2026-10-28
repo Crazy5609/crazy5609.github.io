@@ -10,11 +10,6 @@ body {
   min-height: 100vh;
   margin-left: var(--sidebar-width);
   padding: calc(var(--header-height) + 24px) 24px 40px;
-  transition: margin-left 160ms ease;
-}
-
-.preview-content.is-sidebar-collapsed {
-  margin-left: var(--sidebar-collapsed-width);
 }
 
 .page-heading {

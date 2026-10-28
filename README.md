@@ -10,6 +10,7 @@
 - 组件库维护规范：`components/README.md`
 - 组件登记表：`components/registry.json`
 - 决策与待确认记录：`docs/decision-log.md`
+- Codex 接手说明：`docs/CODEX-HANDOFF.md`
 - 本地运行环境：`scripts/use-local-env.ps1`
 - 原始需求资料：`BOMP知识共享中心软件需求说明书.docx`
 - 最小功能单元表：`知识共享中心-最小单元功能表.xlsx`

@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BOMP 通用组件库</title>
-  <link rel="stylesheet" href="base.css">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="base.css?v=2.2.0">
   <link rel="stylesheet" href="gallery.css">
 </head>
 <body>
   <div class="component-preview-shell">
     <bomp-sidebar id="appSidebar" active="company-library"></bomp-sidebar>
-    <bomp-header id="appHeader" company-name="国网物资有限公司" product-name="知识共享中心" user-name="孙鹏飞" notification-count="8"></bomp-header>
+    <bomp-header id="appHeader" system-name="企业经营管理系统" system-code="BOMP" active-module="artificial-intelligence" user-name="孙鹏飞"></bomp-header>
 
     <main class="preview-content" id="previewContent">
       <div class="page-heading">
@@ -48,9 +49,9 @@
   <div class="toast-success" id="feedbackToast" role="status" aria-live="polite" hidden>操作成功</div>
 
   <script src="icons.js"></script>
-  <script src="app-sidebar/component.js"></script>
-  <script src="app-header/component.js"></script>
-  <script src="knowledge-table/component.js"></script>
+  <script src="app-sidebar/component.js?v=4.3.0"></script>
+  <script src="app-header/component.js?v=4.1.1"></script>
+  <script src="knowledge-table/component.js?v=1.2.0"></script>
   <script src="gallery.js"></script>
 </body>
 </html>

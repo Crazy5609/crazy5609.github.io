@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识共享中心 - 智能检索</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../components/base.css?v=2.2.0">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="search-results.css?v=2">
+</head>
+<body class="search-body">
+  <a class="skip-link" href="#searchWorkspace">跳到检索内容</a>
+  <bomp-sidebar id="appSidebar" active="company-library"></bomp-sidebar>
+  <bomp-header id="appHeader" system-name="企业经营管理系统" system-code="BOMP" active-module="knowledge-sharing" user-name="孙鹏飞"></bomp-header>
+
+  <main class="prototype-main search-main" id="searchWorkspace" tabindex="-1">
+    <header class="search-mode-bar">
+      <button class="mode-back" id="modeBack" type="button"><span data-icon="arrowLeft"></span>返回</button>
+      <nav class="search-mode-tabs" aria-label="智能检索模式">
+        <a href="search-results.html?mode=ai" data-mode-tab="ai">AI问答</a>
+        <a href="search-results.html?mode=knowledge" data-mode-tab="knowledge">搜知识</a>
+        <a href="search-results.html?mode=image" data-mode-tab="image">搜图片</a>
+      </nav>
+      <div class="mode-actions">
+        <button class="btn history-button" id="historyButton" type="button"><span data-icon="history"></span>历史记录</button>
+        <button class="btn btn-primary new-chat-button" id="newChatButton" type="button"><span data-icon="plus"></span>新建会话</button>
+      </div>
+    </header>
+
+    <section class="mode-view ai-mode" id="aiMode" data-mode-view="ai" hidden aria-labelledby="aiQuestionTitle">
+      <div class="ai-workspace">
+        <section class="conversation-pane">
+          <div class="question-bubble">
+            <div class="question-copy"><span>我的提问</span><h1 id="aiQuestionTitle">这张报销单有什么问题？为什么被退回了？</h1></div>
+            <div class="question-attachment">
+              <div class="receipt-thumb" aria-hidden="true"><span>差旅费报销单</span><i></i><i></i><i></i></div>
+              <div><strong>出差报销单.jpg</strong><small>156 KB</small></div>
+            </div>
+          </div>
+
+          <article class="answer-block" aria-label="AI回答">
+            <header class="answer-author"><span class="assistant-mark"><span data-icon="bot" data-icon-size="20"></span></span><div><strong>知识助手</strong><small>已检索 12 份制度文件并完成分析</small></div></header>
+            <div class="answer-content" id="answerContent">
+              <p class="answer-lead">根据报销单内容和《差旅费报销管理办法》，本次退回主要涉及审批、金额与附件三类问题。</p>
+              <section><h2>一、报销单存在的主要问题</h2><ol class="issue-list">
+                <li><strong>缺少审批签字</strong><p>“部门负责人”和“财务审核”栏均未签字，审批流程尚未完成。<button type="button" data-citation="1" aria-label="查看引用 1">1</button></p></li>
+                <li><strong>发票金额与报销金额不一致</strong><p>发票合计金额为 1,280.00 元，报销金额填写为 1,300.00 元，存在 20.00 元差额。</p></li>
+                <li><strong>出差信息填写不完整</strong><p>缺少出差时间、目的地及事由，无法核实出差必要性。<button type="button" data-citation="2" aria-label="查看引用 2">2</button></p></li>
+                <li><strong>费用明细和附件不齐全</strong><p>市内交通费未注明发生事由，且未附完整发票、行程单和住宿凭证。<button type="button" data-citation="3" aria-label="查看引用 3">3</button></p></li>
+              </ol></section>
+              <section><h2>二、退回原因总结</h2><p>当前单据不满足差旅费报销的完整性与合规性要求。建议补全审批签字，统一票据与报销金额，并补充出差说明及有效附件后重新提交。</p></section>
+              <section><h2>三、建议修改措施</h2><ul><li>补全部门负责人和财务审核签字；</li><li>将报销金额调整为与有效票据一致；</li><li>补充出差时间、目的地、事由及费用说明；</li><li>上传完整发票、行程单和住宿凭证。</li></ul></section>
+            </div>
+            <footer class="answer-feedback"><span>以上内容由 AI 生成，请结合制度原文核验</span><div><button class="icon-control" type="button" data-answer-action="copy" title="复制回答" aria-label="复制回答"><span data-icon="copy"></span></button><button class="icon-control" type="button" data-answer-action="refresh" title="重新生成" aria-label="重新生成回答"><span data-icon="rotateCcw"></span></button></div></footer>
+          </article>
+
+          <form class="assistant-composer" id="assistantComposer">
+            <label class="visually-hidden" for="assistantInput">继续提问</label>
+            <textarea id="assistantInput" rows="2" placeholder="继续描述你的问题，AI 将基于企业知识库回答"></textarea>
+            <div class="composer-toolbar"><select id="assistantScope" aria-label="问答知识范围"><option>全范围知识库</option><option>公司知识库</option><option>部门知识库</option><option>我的知识库</option></select><div><button class="icon-control" type="button" id="attachQuestion" title="添加附件" aria-label="添加附件"><span data-icon="paperclip"></span></button><button class="icon-control" type="button" id="addQuestionImage" title="添加图片" aria-label="添加图片"><span data-icon="image"></span></button><button class="composer-send" type="submit" title="发送" aria-label="发送问题"><span data-icon="send"></span></button></div></div>
+          </form>
+        </section>
+
+        <aside class="references-pane" aria-labelledby="referenceTitle">
+          <header><div><span class="eyebrow">检索依据</span><h2 id="referenceTitle">相关引用</h2></div><span class="reference-count">3 项</span></header>
+          <div class="reference-list">
+            <article class="reference-card" data-reference="1"><span class="reference-index">1</span><div class="reference-title"><span class="doc-icon doc-icon-word">W</span><h3>《差旅费报销常见问题解答》</h3></div><p>审批签字、票据一致性与附件完整性要求</p><div class="reference-meta"><span>2.34 MB · 2026-03-30</span><div><button type="button" data-reference-action="download" aria-label="下载引用 1"><span data-icon="download"></span></button><button type="button" data-reference-action="favorite" aria-label="收藏引用 1"><span data-icon="star"></span></button></div></div></article>
+            <article class="reference-card" data-reference="2"><span class="reference-index">2</span><div class="reference-title"><span class="doc-icon doc-icon-word">W</span><h3>《国家电网有限公司差旅费管理办法》</h3></div><p>差旅申请、费用标准和报销审批管理规定</p><div class="reference-meta"><span>1.86 MB · 2025-12-18</span><div><button type="button" data-reference-action="download" aria-label="下载引用 2"><span data-icon="download"></span></button><button type="button" data-reference-action="favorite" aria-label="收藏引用 2"><span data-icon="star"></span></button></div></div></article>
+            <article class="reference-card" data-reference="3"><span class="reference-index">3</span><div class="reference-title"><span class="doc-icon doc-icon-pdf">P</span><h3>《差旅报销附件审核工作指引》</h3></div><p>发票、行程单、住宿凭证等附件审核清单</p><div class="reference-meta"><span>980 KB · 2026-01-09</span><div><button type="button" data-reference-action="permission">申请权限</button></div></div></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="mode-view knowledge-mode" id="knowledgeMode" data-mode-view="knowledge" hidden aria-labelledby="knowledgeTitle">
+      <div class="search-page" id="resultsView">
+        <div class="knowledge-layout">
+          <section class="knowledge-results">
+            <h1 class="visually-hidden" id="knowledgeTitle">知识检索结果</h1>
+            <form class="search-controls" id="searchForm">
+              <div class="main-search"><label class="visually-hidden" for="libraryScope">检索知识库范围</label><select class="search-scope form-control" id="libraryScope"><option value="">全范围知识库</option><option value="公司">公司知识库</option><option value="本部门">部门知识库</option><option value="个人">我的知识库</option></select><span class="search-divider" aria-hidden="true"></span><label class="visually-hidden" for="searchInput">关键词</label><input id="searchInput" type="search" placeholder="输入标题、摘要或正文关键词" autocomplete="off"><button class="search-submit" type="submit" title="搜索" aria-label="搜索"><span data-icon="search" data-icon-size="21"></span></button></div>
+              <button class="btn btn-primary advanced-button" id="advancedButton" type="button"><span data-icon="filter"></span>高级检索</button>
+            </form>
+            <div class="filter-row" aria-label="结果筛选"><span class="filter-label"><span data-icon="filter"></span>筛选</span><select id="fileTypeFilter" aria-label="文件类型"><option value="">文件类型</option><option value="需求说明书">需求说明书</option><option value="管理制度">管理制度</option><option value="报告">报告</option><option value="技术规范">技术规范</option><option value="合同范本">合同范本</option><option value="操作手册">操作手册</option></select><select id="publicScopeFilter" aria-label="公开范围"><option value="">公开范围</option><option value="公司">公司</option><option value="指定部门">指定部门</option><option value="本部门">本部门</option></select><select id="knowledgeTypeFilter" aria-label="知识类型"><option value="">知识类型</option><option value="项目文档">项目文档</option><option value="制度规范">制度规范</option><option value="技术资料">技术资料</option><option value="合同范本">合同范本</option><option value="管理制度">管理制度</option></select><select id="sortFilter" aria-label="排序方式"><option value="relevance">相关度排序</option><option value="latest">上传时间从新到旧</option><option value="oldest">上传时间从旧到新</option></select><button class="reset-button" id="resetFilters" type="button"><span data-icon="rotateCcw"></span>重置</button></div>
+            <div class="result-heading"><p id="resultSummary" role="status" aria-live="polite">找到 9 条相关知识</p><span class="permission-note"><span data-icon="lock" data-icon-size="14"></span>受限文件可检索，查看正文前需申请权限</span></div>
+            <bomp-knowledge-table id="knowledgeTable"></bomp-knowledge-table>
+          </section>
+
+          <aside class="ai-panel" aria-labelledby="aiPanelHeading">
+            <header class="ai-panel-header"><div><span class="ai-kicker"><span data-icon="sparkles" data-icon-size="14"></span>AI速读</span><h2 id="aiPanelHeading">当前文档速读</h2></div><button class="icon-control" id="refreshAiButton" type="button" title="重新生成" aria-label="重新生成速读"><span data-icon="rotateCcw"></span></button></header>
+            <p class="ai-disclaimer">内容由 AI 生成，请结合原文核验</p>
+            <div class="ai-panel-body"><p class="ai-document-title" id="aiPanelTitle">企业经营管理系统项目业务需求说明书</p><section><h3>摘要</h3><p id="aiSummary"></p></section><section><h3>核心结论</h3><p id="aiConclusion"></p></section><section><h3>关键数据</h3><dl class="ai-data-list"><div><dt>文档版本</dt><dd id="aiVersion"></dd></div><div><dt>适用范围</dt><dd id="aiScope"></dd></div></dl></section><section><h3>适用范围</h3><p id="aiApplicable">适用于国网物资有限公司经营管理相关业务部门及项目建设团队。</p></section><section><h3>重要时间</h3><p id="aiDate"></p></section><section><h3>责任部门</h3><p id="aiDepartment"></p></section></div>
+            <footer class="ai-panel-footer"><button class="btn" id="openAiDocument" type="button">查看原文</button><button class="btn btn-primary" id="askDocumentButton" type="button">基于本文提问</button></footer>
+          </aside>
+        </div>
+      </div>
+
+      <section class="detail-view" id="detailView" hidden aria-labelledby="detailTitle">
+        <button class="back-button" id="backToResults" type="button"><span data-icon="arrowLeft"></span>返回检索结果</button>
+        <div class="detail-heading"><div class="detail-title-block"><span class="detail-file-icon" id="detailFileIcon">W</span><div><p id="detailNumber"></p><h1 id="detailTitle"></h1></div></div><div class="detail-actions"><button class="btn" type="button" data-detail-action="favorite"><span data-icon="star"></span>收藏</button><button class="btn" type="button" data-detail-action="share"><span data-icon="share"></span>分享</button><button class="btn btn-primary" type="button" data-detail-action="download"><span data-icon="download"></span>下载</button></div></div>
+        <div class="detail-meta"><div><span>文件类型</span><strong id="detailType"></strong></div><div><span>公开范围</span><strong id="detailScope"></strong></div><div><span>知识类型</span><strong id="detailKnowledgeType"></strong></div><div><span>所属目录</span><strong id="detailDirectory"></strong></div><div><span>上传人</span><strong id="detailUploader"></strong></div><div><span>上传时间</span><strong id="detailUploadedAt"></strong></div></div>
+        <article class="document-preview"><header><span>知识正文预览</span><span>V2.1 · 2.34 MB</span></header><div class="document-page"><p class="document-code">国网物资有限公司企业标准</p><h2 id="documentPreviewTitle"></h2><p class="document-subtitle">版本 V2.1</p><h3>一、建设背景</h3><p>为统一国网物资有限公司经营管理业务流程，提升采购、合同、仓储、配送、供应商协同和财务结算等核心业务的数字化管理能力，建设企业经营管理系统。</p><h3>二、建设目标</h3><p>系统按照统一业务标准、统一数据口径和统一权限体系建设，为业务办理、过程监督、经营分析和协同办公提供支撑。</p><h3>三、业务范围</h3><p>本期范围覆盖物资采购、合同管理、仓储配送、供应商管理、财务结算与综合查询，并与现有业务平台保持数据衔接。</p></div></article>
+      </section>
+    </section>
+
+    <section class="mode-view image-mode" id="imageMode" data-mode-view="image" hidden aria-labelledby="imageTitle">
+      <div class="image-page">
+        <h1 class="visually-hidden" id="imageTitle">图片检索结果</h1>
+        <form class="image-search-form" id="imageSearchForm"><div class="main-search image-search-input"><label class="visually-hidden" for="imageLibraryScope">图片知识库范围</label><select class="search-scope form-control" id="imageLibraryScope"><option>全范围知识库</option><option>公司知识库</option><option>部门知识库</option><option>我的知识库</option></select><span class="search-divider" aria-hidden="true"></span><button class="add-image-button" id="chooseImageButton" type="button"><span data-icon="image"></span><span id="imageQueryText">添加图片或输入关键词</span></button><button class="search-submit" type="submit" title="搜索图片" aria-label="搜索图片"><span data-icon="search" data-icon-size="21"></span></button></div><label class="visually-hidden" for="imageKeyword">图片关键词</label><input class="image-keyword form-control" id="imageKeyword" type="search" value="供应链 数字化" placeholder="补充图片关键词"></form>
+        <div class="image-toolbar"><p id="imageResultSummary">找到 8 张相关图片</p><div><span class="filter-label"><span data-icon="filter"></span>筛选</span><select id="imageScopeFilter" aria-label="图片公开范围"><option value="">公开范围</option><option value="公司">公司</option><option value="本部门">本部门</option></select><select id="imageSortFilter" aria-label="图片排序"><option value="relevance">相关度排序</option><option value="latest">上传时间从新到旧</option></select></div></div>
+        <div class="image-grid" id="imageGrid" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast-success" id="feedbackToast" role="status" aria-live="polite" hidden>操作成功</div>
+  <div class="action-menu" id="actionMenu" hidden><button type="button" data-menu-action="share"><span data-icon="share"></span>分享</button><button type="button" data-menu-action="download"><span data-icon="download"></span>下载</button><button type="button" data-menu-action="favorite"><span data-icon="star"></span>收藏</button><button type="button" data-menu-action="copy"><span data-icon="copy"></span>创建副本</button></div>
+
+  <div class="modal-mask" id="permissionModal" hidden><section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="permissionTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="permissionTitle">申请访问权限</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body field-stack"><p class="permission-file" id="permissionFileName"></p><div class="field-block"><label for="permissionType">申请权限</label><select class="form-control" id="permissionType"><option>查看</option><option>查看并下载</option></select></div><div class="field-block"><label for="permissionReason">申请原因</label><textarea class="form-control" id="permissionReason" placeholder="说明业务用途和使用范围"></textarea></div></div><footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-primary" id="permissionSubmit" type="button">提交申请</button></footer></section></div>
+  <div class="modal-mask" id="advancedModal" hidden><section class="modal modal-large" role="dialog" aria-modal="true" aria-labelledby="advancedTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="advancedTitle">高级检索</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body advanced-grid"><div class="field-block"><label for="uploadDepartment">上传部门</label><select class="form-control" id="uploadDepartment"><option>全部部门</option><option>数字化运营中心</option><option>采购管理部</option><option>供应链管理部</option></select></div><div class="field-block"><label for="ownerDepartment">文件归属部门</label><select class="form-control" id="ownerDepartment"><option>全部部门</option><option>采购管理部</option><option>合同管理部</option><option>综合管理部</option></select></div><div class="field-block"><label for="dateStart">上传日期起</label><input class="form-control" id="dateStart" type="date" value="2026-01-01"></div><div class="field-block"><label for="dateEnd">上传日期止</label><input class="form-control" id="dateEnd" type="date" value="2026-09-07"></div><div class="field-block advanced-keyword"><label for="exactKeyword">精确关键词</label><input class="form-control" id="exactKeyword" type="text" placeholder="多个词以空格分隔"></div></div><footer class="modal-footer"><button class="btn" type="button" id="advancedReset">重置</button><button class="btn btn-primary" type="button" id="advancedApply">应用条件</button></footer></section></div>
+  <div class="modal-mask" id="historyModal" hidden><section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="historyTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="historyTitle">检索历史</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body history-list" id="historyList"></div></section></div>
+  <div class="modal-mask" id="imagePreviewModal" hidden><section class="modal modal-large image-preview-modal" role="dialog" aria-modal="true" aria-labelledby="imagePreviewTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="imagePreviewTitle">图片预览</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body image-preview-body"><div class="image-preview-art" id="imagePreviewArt" role="img"></div><dl><div><dt>文件名称</dt><dd id="imagePreviewName"></dd></div><div><dt>所属知识库</dt><dd id="imagePreviewLibrary"></dd></div><div><dt>上传时间</dt><dd id="imagePreviewDate"></dd></div></dl></div><footer class="modal-footer"><button class="btn" type="button" data-image-action="favorite"><span data-icon="star"></span>收藏</button><button class="btn btn-primary" type="button" data-image-action="download"><span data-icon="download"></span>下载</button></footer></section></div>
+
+  <input id="imageFileInput" type="file" accept="image/png,image/jpeg" hidden>
+  <script src="../components/icons.js"></script>
+  <script src="../components/app-sidebar/component.js?v=4.3.0"></script>
+  <script src="../components/app-header/component.js?v=4.1.1"></script>
+  <script src="../components/knowledge-table/component.js?v=1.2.0"></script>
+  <script src="shared.js"></script>
+  <script src="search-results.js"></script>
+</body>
+</html>

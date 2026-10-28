@@ -1,7 +1,6 @@
 (function () {
   const sidebar = document.getElementById("appSidebar");
   const header = document.getElementById("appHeader");
-  const content = document.getElementById("previewContent");
   const title = document.getElementById("pageTitle");
   const search = document.getElementById("knowledgeSearch");
   const table = document.getElementById("knowledgeTable");
@@ -9,12 +8,6 @@
   let toastTimer;
 
   document.getElementById("searchIcon").innerHTML = window.BompIcons.create("search", { size: 17 });
-
-  if (new URLSearchParams(window.location.search).get("collapsed") === "1") {
-    sidebar.setAttribute("collapsed", "");
-    header.setAttribute("sidebar-collapsed", "");
-    content.classList.add("is-sidebar-collapsed");
-  }
 
   function showToast(message) {
     window.clearTimeout(toastTimer);
@@ -24,11 +17,6 @@
       toast.hidden = true;
     }, 2000);
   }
-
-  sidebar.addEventListener("sidebar-toggle", (event) => {
-    header.toggleAttribute("sidebar-collapsed", event.detail.collapsed);
-    content.classList.toggle("is-sidebar-collapsed", event.detail.collapsed);
-  });
 
   sidebar.addEventListener("navigation-change", (event) => {
     title.textContent = event.detail.label;
@@ -45,7 +33,10 @@
   });
 
   table.addEventListener("row-open", () => showToast("正在打开知识详情"));
-  header.addEventListener("notifications-click", () => showToast("已打开消息通知"));
+  header.addEventListener("module-navigation-change", (event) => {
+    showToast(event.detail.key === "knowledge-sharing" ? "当前位于知识共享" : `${event.detail.label}模块将在后续原型中补充`);
+  });
   header.addEventListener("user-menu-click", () => showToast("已打开个人账号菜单"));
+  header.addEventListener("logout-click", () => showToast("已退出登录（原型演示）"));
   document.getElementById("uploadButton").addEventListener("click", () => showToast("已打开知识上传"));
 })();

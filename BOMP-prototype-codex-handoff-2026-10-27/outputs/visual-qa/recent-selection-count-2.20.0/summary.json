@@ -1,0 +1,34 @@
+{
+  "checked": 2,
+  "failures": [],
+  "results": [
+    {
+      "width": 1280,
+      "rowCount": 9,
+      "initial": "已选中 0 条",
+      "afterOne": "已选中 1 条",
+      "afterAll": "已选中 9 条",
+      "afterClear": "已选中 0 条",
+      "role": "status",
+      "ariaLive": "polite",
+      "ariaAtomic": "true",
+      "statusBeforeFirstButton": true,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1440,
+      "rowCount": 9,
+      "initial": "已选中 0 条",
+      "afterOne": "已选中 1 条",
+      "afterAll": "已选中 9 条",
+      "afterClear": "已选中 0 条",
+      "role": "status",
+      "ariaLive": "polite",
+      "ariaAtomic": "true",
+      "statusBeforeFirstButton": true,
+      "documentOverflow": 0,
+      "failures": []
+    }
+  ]
+}

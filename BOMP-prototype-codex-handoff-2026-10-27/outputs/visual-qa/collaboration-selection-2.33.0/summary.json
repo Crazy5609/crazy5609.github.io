@@ -1,0 +1,54 @@
+{
+  "checked": 3,
+  "failures": [],
+  "results": [
+    {
+      "width": 1280,
+      "allCount": 9,
+      "checkedAll": 9,
+      "sharedToMeVisible": 5,
+      "sharedToMeChecked": 5,
+      "sharedByMeVisible": 4,
+      "sharedByMeChecked": 4,
+      "headerAlign": "center",
+      "headerPaddingLeft": "12px",
+      "headerPaddingRight": "12px",
+      "headerCenterDelta": 0.0078125,
+      "checkBeforeName": true,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1440,
+      "allCount": 9,
+      "checkedAll": 9,
+      "sharedToMeVisible": 5,
+      "sharedToMeChecked": 5,
+      "sharedByMeVisible": 4,
+      "sharedByMeChecked": 4,
+      "headerAlign": "center",
+      "headerPaddingLeft": "12px",
+      "headerPaddingRight": "12px",
+      "headerCenterDelta": 0.0078125,
+      "checkBeforeName": true,
+      "documentOverflow": 0,
+      "failures": []
+    },
+    {
+      "width": 1920,
+      "allCount": 9,
+      "checkedAll": 9,
+      "sharedToMeVisible": 5,
+      "sharedToMeChecked": 5,
+      "sharedByMeVisible": 4,
+      "sharedByMeChecked": 4,
+      "headerAlign": "center",
+      "headerPaddingLeft": "12px",
+      "headerPaddingRight": "12px",
+      "headerCenterDelta": 0.0078125,
+      "checkBeforeName": true,
+      "documentOverflow": 0,
+      "failures": []
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 (function () {
-  const componentStyles = new URL("component.css", document.currentScript.src).href;
+  const componentStyles = new URL("component.css?v=1.2.0", document.currentScript.src).href;
   const defaultRows = [
     { id: "WZ-2025-XM-0032", title: "《国网物资公司-2025年企业经营管理系统-设计开发实施项目业务需求说明书》", format: "word", type: "需求说明书", scope: "公司", knowledgeType: "项目文档", directory: "经营管理", uploader: "张伟", uploadedAt: "2026-07-28 09:32" },
     { id: "WZ-2025-XM-0033", title: "国网物资公司-2025年企业经营管理系统-设计开发实施项目软件需求说明书", format: "word", type: "需求说明书", scope: "公司", knowledgeType: "制度规范", directory: "规章制度", uploader: "李娜", uploadedAt: "2026-07-27 09:32" },
@@ -15,6 +15,22 @@
     const div = document.createElement("div");
     div.textContent = value == null ? "" : String(value);
     return div.innerHTML;
+  }
+
+  function highlightHtml(value, query) {
+    const text = String(value == null ? "" : value);
+    const terms = String(query || "").trim().split(/\s+/).filter(Boolean);
+    if (!terms.length) return escapeHtml(text);
+    const pattern = terms
+      .map((term) => term.replace(/[.*+?^$\x7b\x7d()|[\]\\]/g, "\\$&"))
+      .join("|");
+    const matcher = new RegExp("(" + pattern + ")", "gi");
+    const exactTerms = terms.map((term) => term.toLowerCase());
+    return text.split(matcher).map((part) => (
+      exactTerms.includes(part.toLowerCase())
+        ? "<mark>" + escapeHtml(part) + "</mark>"
+        : escapeHtml(part)
+    )).join("");
   }
 
   function fileLabel(format) {
@@ -65,7 +81,8 @@
       }
 
       this.shadowRoot.querySelectorAll("[data-action]").forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
           this.dispatchEvent(new CustomEvent("table-action", {
             bubbles: true,
             detail: { action: button.dataset.action, id: button.dataset.id }
@@ -73,8 +90,33 @@
         });
       });
 
+      this.shadowRoot.querySelectorAll("[data-row-open]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const row = this._rows.find((item) => item.id === button.dataset.id);
+          if (row && row.restricted) {
+            this.dispatchEvent(new CustomEvent("table-action", {
+              bubbles: true,
+              detail: { action: "apply-permission", id: row.id }
+            }));
+            return;
+          }
+          this.dispatchEvent(new CustomEvent("row-open", {
+            bubbles: true,
+            detail: { id: button.dataset.id }
+          }));
+        });
+      });
+
       this.shadowRoot.querySelectorAll("tbody tr").forEach((row) => {
         row.addEventListener("dblclick", () => {
+          const source = this._rows.find((item) => item.id === row.dataset.id);
+          if (source && source.restricted) {
+            this.dispatchEvent(new CustomEvent("table-action", {
+              bubbles: true,
+              detail: { action: "apply-permission", id: source.id }
+            }));
+            return;
+          }
           this.dispatchEvent(new CustomEvent("row-open", {
             bubbles: true,
             detail: { id: row.dataset.id }
@@ -85,28 +127,36 @@
 
     renderRow(row, index) {
       const format = escapeHtml(row.format || "word");
+      const restricted = Boolean(row.restricted);
       return `
-        <tr data-id="${escapeHtml(row.id)}" class="${index === 0 ? "is-featured" : ""}">
+        <tr data-id="${escapeHtml(row.id)}" class="${index === 0 ? "is-featured" : ""}${restricted ? " is-restricted" : ""}">
           <td class="select-cell"><input data-row-select type="checkbox" aria-label="选择${escapeHtml(row.title)}"></td>
           <td title="${escapeHtml(row.title)}">
             <div class="file-cell">
               <span class="file-icon file-icon-${format}" aria-hidden="true">${fileLabel(row.format)}</span>
-              <span class="file-title">${escapeHtml(row.title)}</span>
+              <button class="file-title-button" type="button" data-row-open data-id="${escapeHtml(row.id)}" title="${restricted ? "申请访问权限" : "查看知识详情"}">
+                <span class="file-title">${highlightHtml(row.title, this._query)}</span>
+                ${restricted ? `<span class="restricted-mark">${window.BompIcons.create("lock", { size: 13 })} 权限受限</span>` : ""}
+              </button>
             </div>
           </td>
           <td>${escapeHtml(row.type)}</td>
           <td>${escapeHtml(row.scope)}</td>
           <td><span class="table-tag">${escapeHtml(row.knowledgeType)}</span></td>
-          <td title="${escapeHtml(row.directory)}">${escapeHtml(row.directory)}</td>
+          <td title="${escapeHtml(restricted ? "需申请权限" : row.directory)}">${escapeHtml(restricted ? "需申请权限" : row.directory)}</td>
           <td class="muted">${escapeHtml(row.uploadedAt)}</td>
           <td>
-            <div class="row-actions">
-              <button class="action-button" type="button" data-action="preview" data-id="${escapeHtml(row.id)}" title="预览" aria-label="预览">${window.BompIcons.create("eye", { size: 17 })}</button>
-              <button class="action-button" type="button" data-action="download" data-id="${escapeHtml(row.id)}" title="下载" aria-label="下载">${window.BompIcons.create("download", { size: 17 })}</button>
-              <button class="action-button ai-action" type="button" data-action="ai-read" data-id="${escapeHtml(row.id)}" title="AI速读">${window.BompIcons.create("zap", { size: 14 })}<span>AI速读</span></button>
-            </div>
+            ${restricted ? `
+              <button class="permission-action" type="button" data-action="apply-permission" data-id="${escapeHtml(row.id)}">申请权限</button>
+            ` : `
+              <div class="row-actions">
+                <button class="action-button" type="button" data-action="preview" data-id="${escapeHtml(row.id)}" title="预览" aria-label="预览">${window.BompIcons.create("eye", { size: 17 })}</button>
+                <button class="action-button" type="button" data-action="download" data-id="${escapeHtml(row.id)}" title="下载" aria-label="下载">${window.BompIcons.create("download", { size: 17 })}</button>
+                <button class="action-button ai-action" type="button" data-action="ai-read" data-id="${escapeHtml(row.id)}" title="AI速读">${window.BompIcons.create("zap", { size: 14 })}<span>AI速读</span></button>
+              </div>
+            `}
           </td>
-          <td><button class="more-button" type="button" data-action="more" data-id="${escapeHtml(row.id)}" title="更多操作" aria-label="更多操作">${window.BompIcons.create("moreHorizontal", { size: 19 })}</button></td>
+          <td>${restricted ? "" : `<button class="more-button" type="button" data-action="more" data-id="${escapeHtml(row.id)}" title="更多操作" aria-label="更多操作">${window.BompIcons.create("moreHorizontal", { size: 19 })}</button>`}</td>
         </tr>
       `;
     }
@@ -119,7 +169,7 @@
           ${rows.length ? `
             <table aria-label="知识文件列表">
               <colgroup>
-                <col style="width:4%"><col style="width:34%"><col style="width:7%"><col style="width:8%"><col style="width:9%"><col style="width:10%"><col style="width:12%"><col style="width:13%"><col style="width:3%">
+                <col class="col-check"><col class="col-name"><col class="col-type"><col class="col-scope"><col class="col-knowledge-type"><col class="col-directory"><col class="col-time"><col class="col-actions"><col class="col-more">
               </colgroup>
               <thead>
                 <tr>

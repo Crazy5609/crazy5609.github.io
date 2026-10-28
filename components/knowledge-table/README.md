@@ -8,4 +8,8 @@
 <bomp-knowledge-table id="knowledgeTable"></bomp-knowledge-table>
 ```
 
-调用 `filter(query)` 可执行前端过滤。预览、下载、AI 速读和更多按钮统一触发 `table-action` 事件；双击行触发 `row-open` 事件。
+调用 `filter(query)` 可执行前端过滤并高亮标题中的命中词。点击文件名或双击普通行触发 `row-open` 事件；预览、下载、AI 速读和更多按钮统一触发 `table-action` 事件。
+
+传入行数据时可设置 `restricted: true` 表示受限知识。组件将隐藏非必要信息和普通操作，只显示权限受限标识与“申请权限”入口，并触发 `table-action` 的 `apply-permission` 动作。
+
+组件内文件名和操作按钮统一使用 2px 圆角，与项目全局按钮规范一致。列宽使用语义 `colgroup`：名称列自动吸收剩余空间，类型、范围、目录、时间和操作等字段按内容长度使用百分比权重随容器伸缩。

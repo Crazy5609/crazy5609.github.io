@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识共享中心-最近使用</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../components/base.css?v=2.2.0">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="recent-use.css?v=1.1.0">
+</head>
+<body class="recent-use-body">
+  <bomp-sidebar id="appSidebar" active="recent-use"></bomp-sidebar>
+  <bomp-header id="appHeader" system-name="企业经营管理系统" system-code="BOMP" active-module="artificial-intelligence" user-name="孙鹏飞"></bomp-header>
+
+  <main class="prototype-main recent-use-main">
+    <section id="listView" aria-labelledby="pageTitle">
+      <header class="recent-page-heading">
+        <div><h1 class="page-title" id="pageTitle">最近使用</h1><p>集中查看近期浏览、编辑、下载或使用过的文件</p></div>
+        <button class="btn refresh-button" id="refreshButton" type="button"><span data-icon="rotateCcw"></span>刷新</button>
+      </header>
+
+      <section class="recent-panel" aria-label="最近使用文件">
+        <form class="recent-toolbar" id="filterForm" role="search">
+          <label class="search-control" for="nameSearch"><span data-icon="search" data-icon-size="17"></span><input id="nameSearch" type="search" placeholder="搜索文件名称" autocomplete="off"></label>
+          <label><span class="visually-hidden">权限筛选</span><select class="form-control" id="permissionFilter"><option value="">全部权限</option><option>可管理</option><option>可编辑</option><option>可查看</option></select></label>
+          <label><span class="visually-hidden">所属位置筛选</span><select class="form-control" id="locationFilter"><option value="">全部位置</option><option>我的知识库</option><option>部门知识库</option><option>公司知识库</option></select></label>
+          <label><span class="visually-hidden">最近使用时间筛选</span><select class="form-control" id="timeFilter"><option value="">全部时间</option><option value="today">今天</option><option value="7">近7天</option><option value="30">近30天</option></select></label>
+          <label><span class="visually-hidden">排序方式</span><select class="form-control sort-control" id="sortSelect"><option value="newest">最近使用时间从新到旧</option><option value="oldest">最近使用时间从旧到新</option><option value="name">文件名称排序</option></select></label>
+        </form>
+
+        <div class="recent-summary"><p id="resultSummary" role="status" aria-live="polite">正在加载最近使用文件</p><button class="clear-button" id="clearFiltersTop" type="button" hidden>清空筛选</button></div>
+
+        <div class="recent-skeleton" id="loadingState" aria-label="正在加载文件列表">
+          <div class="skeleton-head"></div>
+          <div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div>
+        </div>
+
+        <div class="recent-table-wrap" id="tableRegion" hidden>
+          <table class="recent-table" aria-label="最近使用文件列表">
+            <colgroup><col class="name-column"><col class="time-column"><col class="permission-column"><col class="location-column"><col class="operation-column"></colgroup>
+            <thead><tr><th scope="col">名称</th><th scope="col">最近使用时间</th><th scope="col">权限</th><th scope="col">所属位置</th><th scope="col">操作</th></tr></thead>
+            <tbody id="fileTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="recent-empty" id="emptyState" hidden>
+          <span class="empty-icon" data-icon="fileText" data-icon-size="30"></span>
+          <h2 id="emptyTitle">没有找到符合条件的文件</h2>
+          <p id="emptyDescription">请尝试修改搜索内容或筛选条件。</p>
+          <button class="btn" id="clearFiltersButton" type="button">清空筛选</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="file-detail-view" id="detailView" hidden aria-labelledby="detailTitle">
+      <button class="back-button" id="backButton" type="button"><span data-icon="arrowLeft"></span>返回最近使用</button>
+      <header class="detail-heading">
+        <div class="detail-title-row"><span class="file-type-icon is-word" id="detailTypeIcon">W</span><div><p id="detailPath"></p><h1 id="detailTitle"></h1><span id="detailMeta"></span></div></div>
+        <div class="detail-actions"><span class="detail-mode-tag" id="detailModeTag">文件预览</span><button class="btn" id="detailDownload" type="button"><span data-icon="download"></span>下载</button><button class="btn btn-primary" id="detailEdit" type="button"><span data-icon="filePenLine"></span>在线编辑</button></div>
+      </header>
+      <div class="detail-layout">
+        <article class="document-preview" id="documentPreview">
+          <p class="document-security">国网物资有限公司内部资料</p>
+          <h2 id="previewTitle"></h2>
+          <p class="document-subtitle">知识共享中心文件在线预览</p>
+          <h3>一、文件说明</h3><p>本文件围绕年度重点工作、制度规范或项目推进形成，用于支持跨部门知识复用和业务协同。</p>
+          <h3>二、主要内容</h3><p>内容包括工作目标、职责分工、实施安排和关键业务要求。演示原型仅展示文件摘要，不加载真实附件正文。</p>
+          <h3>三、使用要求</h3><p>请按照当前文件权限使用和分享资料，涉及公共知识库的文件应遵循对应目录管理要求。</p>
+        </article>
+        <aside class="detail-info"><h2>文件信息</h2><dl><div><dt>权限</dt><dd id="detailPermission"></dd></div><div><dt>最近使用</dt><dd id="detailTime"></dd></div><div><dt>所属位置</dt><dd id="detailLocation"></dd></div><div><dt>文件格式</dt><dd id="detailExtension"></dd></div></dl></aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="recent-more-menu" id="moreMenu" role="menu" hidden></div>
+  <div class="toast-success" id="feedbackToast" role="status" aria-live="polite" hidden>操作成功</div>
+
+  <div class="modal-mask" id="deleteModal" hidden><section class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="deleteTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="deleteTitle">确认删除文件？</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body"><p class="confirm-copy">删除后，文件将移入回收站，可在回收站中恢复。</p><p class="confirm-file" id="deleteFileName"></p></div><footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-danger-solid" id="confirmDeleteButton" type="button">确认删除</button></footer></section></div>
+
+  <div class="modal-mask" id="copyModal" hidden><section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="copyTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="copyTitle">创建副本</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body field-stack"><div class="field-block"><label for="copyName">副本名称</label><input class="form-control" id="copyName" type="text"></div><div class="field-block"><label for="copyLocation">保存位置</label><select class="form-control" id="copyLocation"><option>我的知识库</option><option>我的知识库 / 工作材料</option><option>我的知识库 / 工作材料 / 项目汇报</option><option>我的知识库 / 制度规范</option><option>我的知识库 / 培训资料</option></select></div></div><footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-primary" id="confirmCopyButton" type="button">创建副本</button></footer></section></div>
+
+  <div class="modal-mask" id="feedbackModal" hidden><section class="modal modal-medium" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle"><header class="modal-header modal-title-row"><h2 class="modal-heading" id="feedbackTitle">问题反馈</h2><button class="page-icon-button modal-close" type="button" data-modal-close aria-label="关闭" data-icon="x"></button></header><div class="modal-body field-stack"><p class="feedback-file" id="feedbackFileName"></p><div class="field-block"><label for="feedbackType">反馈类型</label><select class="form-control" id="feedbackType"><option>文件内容有误</option><option>文件已过期</option><option>无法预览或下载</option><option>权限问题</option><option>所属目录不准确</option><option>其他问题</option></select></div><div class="field-block"><label for="feedbackDescription">问题描述</label><textarea class="form-control feedback-textarea" id="feedbackDescription" maxlength="500" placeholder="请描述具体问题，便于我们快速核实"></textarea><div class="character-count"><span id="feedbackError" role="alert"></span><span>还可输入 <b id="remainingCount">500</b> 字</span></div></div></div><footer class="modal-footer"><button class="btn" type="button" data-modal-close>取消</button><button class="btn btn-primary" id="submitFeedbackButton" type="button">提交反馈</button></footer></section></div>
+
+  <bomp-file-action-dialogs id="fileActionDialogs"></bomp-file-action-dialogs>
+
+  <script src="../components/icons.js"></script>
+  <script src="../components/app-sidebar/component.js?v=4.3.0"></script>
+  <script src="../components/app-header/component.js?v=4.1.1"></script>
+  <script src="../components/file-action-dialogs/component.js?v=1.0.0"></script>
+  <script src="shared.js"></script>
+  <script src="recent-use.js"></script>
+</body>
+</html>

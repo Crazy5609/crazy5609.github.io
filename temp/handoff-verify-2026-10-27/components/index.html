@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOMP 通用组件库</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="base.css?v=2.2.0">
+  <link rel="stylesheet" href="gallery.css">
+</head>
+<body>
+  <div class="component-preview-shell">
+    <bomp-sidebar id="appSidebar" active="company-library"></bomp-sidebar>
+    <bomp-header id="appHeader" system-name="企业经营管理系统" system-code="BOMP" active-module="artificial-intelligence" user-name="孙鹏飞"></bomp-header>
+
+    <main class="preview-content" id="previewContent">
+      <div class="page-heading">
+        <div>
+          <div class="breadcrumb">共享知识库 / 公司知识库</div>
+          <h1 class="page-title" id="pageTitle">公司知识库</h1>
+        </div>
+        <button class="btn btn-primary" id="uploadButton" type="button">上传知识</button>
+      </div>
+
+      <section class="list-toolbar" aria-label="知识文件筛选">
+        <label class="search-box" for="knowledgeSearch">
+          <span class="search-icon" id="searchIcon" aria-hidden="true"></span>
+          <input id="knowledgeSearch" class="form-control" type="search" placeholder="搜索文件名称、类型或目录">
+        </label>
+        <select class="form-control filter-select" aria-label="知识类型">
+          <option>全部知识类型</option>
+          <option>项目文档</option>
+          <option>制度规范</option>
+          <option>技术资料</option>
+          <option>合同范本</option>
+        </select>
+      </section>
+
+      <section class="table-region" aria-labelledby="tableTitle">
+        <div class="section-heading">
+          <h2 class="card-title" id="tableTitle">知识文件</h2>
+          <span class="result-count">共 8 条</span>
+        </div>
+        <bomp-knowledge-table id="knowledgeTable"></bomp-knowledge-table>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast-success" id="feedbackToast" role="status" aria-live="polite" hidden>操作成功</div>
+
+  <script src="icons.js"></script>
+  <script src="app-sidebar/component.js?v=4.3.0"></script>
+  <script src="app-header/component.js?v=4.1.1"></script>
+  <script src="knowledge-table/component.js?v=1.2.0"></script>
+  <script src="gallery.js"></script>
+</body>
+</html>
