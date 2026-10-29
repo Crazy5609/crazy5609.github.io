@@ -1,5 +1,5 @@
 (function () {
-  var componentStyles = new URL("component.css?v=1.0.0", document.currentScript.src).href;
+  var componentStyles = new URL("component.css?v=1.1.0", document.currentScript.src).href;
 
   function escapeHtml(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
@@ -8,12 +8,10 @@
   }
 
   function fileMark(file) {
-    var ext = String(file && file.ext || "FILE").toUpperCase();
-    if (ext === "DOCX") return "W";
-    if (ext === "XLSX") return "X";
-    if (ext === "PPTX") return "P";
-    if (ext === "PNG" || ext === "JPG") return "IMG";
-    return ext;
+    var name = String(file && file.name || "");
+    var match = name.match(/\.([A-Za-z0-9]{1,5})$/);
+    var ext = String(file && file.ext || (match && match[1]) || "FILE").replace(/^\./, "").toUpperCase();
+    return /^[A-Z0-9]{1,5}$/.test(ext) ? ext : "FILE";
   }
 
   class BompFileActionDialogs extends HTMLElement {
@@ -35,7 +33,7 @@
               <button class="page-icon-button modal-close" type="button" data-dialog-close aria-label="关闭分享弹窗"></button>
             </header>
             <div class="modal-body field-stack">
-              <p class="file-action-dialogs__file"><span class="file-action-dialogs__file-icon" data-share-mark>W</span><span class="file-action-dialogs__file-name" data-share-name></span></p>
+              <p class="file-action-dialogs__file"><span class="file-action-dialogs__file-icon" data-share-mark>DOCX</span><span class="file-action-dialogs__file-name" data-share-name></span></p>
               <div class="field-block"><label for="fileShareScope">访问权限</label><select class="form-control" id="fileShareScope"><option>获得链接的人可查看</option><option>指定人员可查看</option><option>指定人员可编辑</option></select></div>
               <div class="field-block"><label for="fileShareValidity">链接有效期</label><select class="form-control" id="fileShareValidity"><option>7天</option><option>30天</option><option>长期有效</option></select></div>
               <div class="field-block"><label for="fileShareLink">分享链接</label><div class="file-action-dialogs__link-row"><input class="form-control" id="fileShareLink" type="text" readonly><button class="btn" type="button" data-copy-link>复制链接</button></div></div>

@@ -1,5 +1,5 @@
 (function () {
-  const componentStyles = new URL("component.css?v=1.4.0", document.currentScript.src).href;
+  const componentStyles = new URL("component.css?v=1.5.0", document.currentScript.src).href;
   const defaultRows = [
     { id: "WZ-2025-XM-0032", title: "《国网物资公司-2025年企业经营管理系统-设计开发实施项目业务需求说明书》", format: "word", type: "需求说明书", scope: "公司", knowledgeType: "项目文档", directory: "经营管理", uploader: "张伟", uploadedAt: "2026-07-28 09:32" },
     { id: "WZ-2025-XM-0033", title: "国网物资公司-2025年企业经营管理系统-设计开发实施项目软件需求说明书", format: "word", type: "需求说明书", scope: "公司", knowledgeType: "制度规范", directory: "规章制度", uploader: "李娜", uploadedAt: "2026-07-27 09:32" },
@@ -33,8 +33,11 @@
     )).join("");
   }
 
-  function fileLabel(format) {
-    return ({ word: "W", pdf: "P", excel: "X", ppt: "P", image: "I", video: "V" })[format] || "F";
+  function fileLabel(row) {
+    const title = String(row.title || row.name || "");
+    const extension = title.match(/\.([A-Za-z0-9]{1,5})$/);
+    if (extension) return extension[1].toUpperCase();
+    return ({ word: "DOCX", pdf: "PDF", excel: "XLSX", ppt: "PPTX", image: "PNG", video: "MP4", audio: "MP3" })[row.format] || "FILE";
   }
 
   class BompKnowledgeTable extends HTMLElement {
@@ -133,7 +136,7 @@
           <td class="select-cell"><input data-row-select type="checkbox" aria-label="选择${escapeHtml(row.title)}"></td>
           <td title="${escapeHtml(row.title)}">
             <div class="file-cell">
-              <span class="file-icon file-icon-${format}" aria-hidden="true">${fileLabel(row.format)}</span>
+              <span class="file-icon file-icon-${format}" aria-hidden="true">${fileLabel(row)}</span>
               <button class="file-title-button" type="button" data-row-open data-id="${escapeHtml(row.id)}" title="${restricted ? "申请访问权限" : "查看知识详情"}">
                 <span class="file-title">${highlightHtml(row.title, this._query)}</span>
                 ${restricted ? `<span class="restricted-mark">${window.BompIcons.create("lock", { size: 13 })} 权限受限</span>` : ""}

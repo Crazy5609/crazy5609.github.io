@@ -423,8 +423,9 @@
   justify-content: center;
   border-radius: 3px;
   color: #ffffff;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .file-type-mark.word { background: #2f80ed; }

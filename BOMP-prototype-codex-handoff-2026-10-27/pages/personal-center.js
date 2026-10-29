@@ -13,7 +13,7 @@
   var currentTaskAction = "confirm";
 
   function formatLabel(format) {
-    return { word: "W", ppt: "PPT", pdf: "PDF", excel: "X" }[format] || "F";
+    return { word: "DOCX", ppt: "PPTX", pdf: "PDF", excel: "XLSX" }[format] || "FILE";
   }
 
   function fileItem(file) {

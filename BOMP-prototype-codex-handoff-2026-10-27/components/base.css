@@ -15,6 +15,7 @@
   --color-error: #ff4d4f;
   --sidebar-width: 220px;
   --header-height: 56px;
+  --main-content-gutter: 10px;
   --content-padding: 24px;
   --control-height: 32px;
   --control-radius: 6px;
@@ -42,6 +43,14 @@ html.is-resizing-sidebar,
 html.is-resizing-sidebar * {
   cursor: col-resize !important;
   user-select: none !important;
+}
+
+body main.prototype-main {
+  padding-left: var(--main-content-gutter);
+}
+
+body main.prototype-main.suite-main {
+  padding-left: var(--main-content-gutter);
 }
 
 body {

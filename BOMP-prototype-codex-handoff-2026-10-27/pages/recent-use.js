@@ -23,7 +23,7 @@
   function rowById(id) { return files.find(function (file) { return file.id === id; }); }
   function absoluteTime(file) { return file.recentAt.replace("T", " ").slice(0, 19); }
   function typeMark(file) {
-    return { word: "W", excel: "X", ppt: "P", pdf: "PDF", image: "IMG", video: "MP4" }[file.type] || "FILE";
+    return String(file.ext || "FILE").replace(/^\./, "").toUpperCase();
   }
   function shortPath(path) {
     var parts = path.split(" / ");

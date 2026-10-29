@@ -207,7 +207,7 @@
     document.getElementById("selectedFileRows").innerHTML = files.map(function (file, index) {
       return '<tr data-selection-row="' + index + '">' +
         '<td class="checkbox-column"><input type="checkbox" data-file-select="' + index + '" checked aria-label="选择 ' + escapeHtml(file.name) + '"></td>' +
-        '<td><div class="file-cell"><span class="file-type-mark ' + file.type + '">' + escapeHtml(file.label.replace("XLSX", "X").replace("DOCX", "W").replace("PPTX", "PPT")) + '</span><span><strong title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</strong><small>' + escapeHtml(file.code) + '</small></span></div></td>' +
+        '<td><div class="file-cell"><span class="file-type-mark ' + file.type + '">' + escapeHtml(file.label) + '</span><span><strong title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</strong><small>' + escapeHtml(file.code) + '</small></span></div></td>' +
         '<td>' + escapeHtml(file.label) + '</td>' +
         '<td>' + escapeHtml(file.size) + '</td>' +
         '<td>' + escapeHtml(directory) + '</td>' +
@@ -237,7 +237,7 @@
       } else if (file.issue === "naming") {
         action = '<button class="issue-action" type="button" data-resolve-issue="' + index + '">采用推荐命名</button>';
       }
-      return '<tr><td><div class="file-cell"><span class="file-type-mark ' + file.type + '">' + escapeHtml(file.label.replace("XLSX", "X").replace("DOCX", "W").replace("PPTX", "PPT")) + '</span><span><strong title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</strong><small>' + escapeHtml(file.size) + '</small></span></div></td>' +
+      return '<tr><td><div class="file-cell"><span class="file-type-mark ' + file.type + '">' + escapeHtml(file.label) + '</span><span><strong title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</strong><small>' + escapeHtml(file.size) + '</small></span></div></td>' +
         '<td>' + processingStatus(file, "format") + '</td>' +
         '<td>' + processingStatus(file, "duplicate") + '</td>' +
         '<td>' + processingStatus(file, "naming") + '</td>' +
@@ -272,7 +272,7 @@
     if (!file) return;
     var mark = document.getElementById("activeFileMark");
     mark.className = "file-type-mark " + file.type;
-    mark.textContent = file.label.replace("XLSX", "X").replace("DOCX", "W").replace("PPTX", "PPT");
+    mark.textContent = file.label;
     document.getElementById("activeFileName").textContent = file.name;
     document.getElementById("activeFileMeta").textContent = file.label + " · " + file.size + " · AI 标引完成";
     document.getElementById("documentTitle").value = shortName(file.name);
@@ -307,7 +307,7 @@
 
   function renderResultRows() {
     document.getElementById("resultRows").innerHTML = files.map(function (file) {
-      return '<tr><td><div class="file-cell"><span class="file-type-mark ' + file.type + '">' + escapeHtml(file.label.replace("XLSX", "X").replace("DOCX", "W").replace("PPTX", "PPT")) + '</span><span><strong title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</strong><small>' + escapeHtml(file.code) + '</small></span></div></td><td>' + escapeHtml(file.kind) + '</td><td>' + escapeHtml(file.directory) + '</td><td><span class="status-pill review">待部门审核</span></td></tr>';
+      return '<tr><td><div class="file-cell"><span class="file-type-mark ' + file.type + '">' + escapeHtml(file.label) + '</span><span><strong title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</strong><small>' + escapeHtml(file.code) + '</small></span></div></td><td>' + escapeHtml(file.kind) + '</td><td>' + escapeHtml(file.directory) + '</td><td><span class="status-pill review">待部门审核</span></td></tr>';
     }).join("");
   }
 

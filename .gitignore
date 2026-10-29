@@ -4,3 +4,8 @@
 node_modules/
 dist/
 *.log
+/deliverables/
+
+# Local browser profiles and visual QA artifacts
+BOMP-prototype-codex-handoff-2026-10-27/temp/
+BOMP-prototype-codex-handoff-2026-10-27/outputs/

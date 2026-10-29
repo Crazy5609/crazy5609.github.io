@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-28",
+  "updatedAt": "2026-10-29",
   "components": [
     {
       "id": "base-styles",
       "name": "全局基础样式",
       "status": "active",
-      "version": "2.3.0",
+      "version": "2.4.0",
       "path": "components/base.css",
       "usedBy": [
         "components/index.html",
@@ -15,8 +15,11 @@
         "pages/personal-center.html",
         "pages/recent-use.html",
         "pages/prototype-suite/home.html",
+        "pages/prototype-suite/home-2.html",
         "pages/prototype-suite/qa-result.html",
+        "pages/prototype-suite/qa-result-home.html",
         "pages/prototype-suite/document-search.html",
+        "pages/prototype-suite/document-search-home.html",
         "pages/prototype-suite/image-search.html",
         "pages/prototype-suite/my-library.html",
         "pages/prototype-suite/my-knowledge.html",
@@ -56,7 +59,7 @@
         "pages/prototype-suite/company-management-log.html",
         "pages/prototype-suite/tag-management.html"
       ],
-      "notes": "统一维护色彩、字体、所有按钮 2px 圆角、全宽顶部栏、可拉宽侧边导航，以及业务表格 12px 中间列间距和 28px 操作列右侧间距变量；所有原型页面必须引用。"
+      "notes": "统一维护色彩、字体、所有按钮 2px 圆角、全宽顶部栏、可拉宽侧边导航、侧栏与主内容区之间 10px 全局外间距，以及业务表格 12px 中间列间距和 28px 操作列右侧间距变量；所有原型页面必须引用。"
     },
     {
       "id": "app-sidebar",
@@ -71,8 +74,11 @@
         "pages/personal-center.html",
         "pages/recent-use.html",
         "pages/prototype-suite/home.html",
+        "pages/prototype-suite/home-2.html",
         "pages/prototype-suite/qa-result.html",
+        "pages/prototype-suite/qa-result-home.html",
         "pages/prototype-suite/document-search.html",
+        "pages/prototype-suite/document-search-home.html",
         "pages/prototype-suite/image-search.html",
         "pages/prototype-suite/my-library.html",
         "pages/prototype-suite/my-knowledge.html",
@@ -127,8 +133,11 @@
         "pages/personal-center.html",
         "pages/recent-use.html",
         "pages/prototype-suite/home.html",
+        "pages/prototype-suite/home-2.html",
         "pages/prototype-suite/qa-result.html",
+        "pages/prototype-suite/qa-result-home.html",
         "pages/prototype-suite/document-search.html",
+        "pages/prototype-suite/document-search-home.html",
         "pages/prototype-suite/image-search.html",
         "pages/prototype-suite/my-library.html",
         "pages/prototype-suite/my-knowledge.html",
@@ -174,13 +183,13 @@
       "id": "knowledge-table",
       "name": "知识文件表格",
       "status": "active",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "path": "components/knowledge-table",
       "usedBy": [
         "components/index.html",
         "pages/search-results.html"
       ],
-        "notes": "支持真实感知识文件数据、选择、搜索过滤与关键词高亮、详情打开、受限知识权限申请，以及预览、下载、AI速读和更多操作事件；名称列自动吸收剩余空间并单行省略，更多操作并入最右侧操作列，操作列右侧保留 28px 间距；文件列表外框不显示左右垂直边框。"
+        "notes": "支持真实感知识文件数据、选择、搜索过滤与关键词高亮、详情打开、受限知识权限申请，以及预览、下载、AI速读和更多操作事件；文件类型图标显示真实大写扩展名；名称列自动吸收剩余空间并单行省略，更多操作并入最右侧操作列，操作列右侧保留 28px 间距；文件列表外框不显示左右垂直边框。"
     },
     {
       "id": "search-history-panel",
@@ -190,7 +199,9 @@
       "path": "components/search-history-panel",
       "usedBy": [
         "pages/prototype-suite/document-search.html",
+        "pages/prototype-suite/document-search-home.html",
         "pages/prototype-suite/qa-result.html",
+        "pages/prototype-suite/qa-result-home.html",
         "pages/prototype-suite/image-search.html"
       ],
       "notes": "AI问答、搜知识和搜图片共用的按需历史记录侧栏，支持历史记录选择、收起和页面级焦点恢复。"
@@ -199,12 +210,12 @@
       "id": "file-action-dialogs",
       "name": "文件操作弹窗",
       "status": "active",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "components/file-action-dialogs",
       "usedBy": [
         "pages/recent-use.html"
       ],
-      "notes": "提供文件分享与权限管理通用弹窗，支持分享链接生成、复制、权限成员新增、角色调整和保存事件。"
+      "notes": "提供文件分享与权限管理通用弹窗，文件摘要显示真实大写扩展名，并支持分享链接生成、复制、权限成员新增、角色调整和保存事件。"
     }
   ]
 }

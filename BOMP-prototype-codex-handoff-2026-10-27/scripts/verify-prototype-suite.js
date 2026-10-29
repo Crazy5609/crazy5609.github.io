@@ -6,6 +6,9 @@ const projectRoot = path.resolve(__dirname, "..");
 const suiteSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "suite.js"), "utf8");
 const suiteStyles = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "suite.css"), "utf8");
 const homePageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "home.html"), "utf8");
+const homeTwoPageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "home-2.html"), "utf8");
+const homeQaPageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "qa-result-home.html"), "utf8");
+const homeDocumentPageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "document-search-home.html"), "utf8");
 const baseStyles = fs.readFileSync(path.join(projectRoot, "components", "base.css"), "utf8");
 const headerSource = fs.readFileSync(path.join(projectRoot, "components", "app-header", "component.js"), "utf8");
 const headerStyles = fs.readFileSync(path.join(projectRoot, "components", "app-header", "component.css"), "utf8");
@@ -19,6 +22,8 @@ const tagManagementSource = fs.readFileSync(path.join(projectRoot, "pages", "pro
 const tagManagementPage = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "tag-management.html"), "utf8");
 const knowledgeTableSource = fs.readFileSync(path.join(projectRoot, "components", "knowledge-table", "component.js"), "utf8");
 const knowledgeTableStyles = fs.readFileSync(path.join(projectRoot, "components", "knowledge-table", "component.css"), "utf8");
+const fileActionDialogsSource = fs.readFileSync(path.join(projectRoot, "components", "file-action-dialogs", "component.js"), "utf8");
+const departmentUploadSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "department-knowledge-upload.js"), "utf8");
 const legacyRecentStyles = fs.readFileSync(path.join(projectRoot, "pages", "recent-use.css"), "utf8");
 
 const sidebarWindow = {};
@@ -36,7 +41,7 @@ vm.runInNewContext(sidebarSource, {
 const departmentDirectoryData = sidebarWindow.BompDepartmentDirectoryData;
 const companyDirectoryData = sidebarWindow.BompCompanyDirectoryData;
 
-function render(page, storedAdvancedCriteria) {
+function render(page, storedAdvancedCriteria, pageDataset) {
   const root = {
     innerHTML: "",
     insertAdjacentHTML(position, html) {
@@ -44,7 +49,7 @@ function render(page, storedAdvancedCriteria) {
     }
   };
   const body = {
-    dataset: { page },
+    dataset: Object.assign({ page }, pageDataset || {}),
     appendChild() {},
     insertAdjacentHTML() {}
   };
@@ -106,24 +111,47 @@ function assertBusinessTableOrder(html, page) {
 }
 
 const home = render("home");
+const homeTwo = render("home", null, { homeVariant: "two" });
+const homeQa = render("qa", null, { qaVariant: "home" });
+const homeDocuments = render("documents", null, { documentVariant: "home" });
 assert(!home.includes("data-advanced-search-open") && !home.includes('id="advancedSearchModal"') && !home.includes("高级搜索"), "知识共享中心首页仍显示高级搜索入口或弹窗");
 assert(home.includes('aria-label="知识库范围"') && home.includes("全范围知识库") && home.includes("添加附件") && home.includes("添加图片"), "首页移除高级搜索后核心输入工具不完整");
-assert(home.includes('class="home-mode-switch"') && home.includes('aria-label="知识服务模式"') && home.includes('aria-pressed="true">AI问答') && home.includes('aria-pressed="false" data-nav="document-search.html">搜知识'), "首页缺少可访问的 AI问答/搜知识模式切换");
+assert(home.includes('class="home-mode-switch"') && home.includes('data-home-mode="qa" aria-pressed="true">AI问答') && home.includes('data-home-mode="documents" aria-pressed="false">搜知识'), "首页缺少可访问的 AI问答/搜知识模式切换");
+assert(home.includes('class="home-document-search"') && home.includes('data-home-search-scope-slot') && home.includes('id="homeDocumentSearch" type="search"') && home.includes('placeholder="搜索文件名称、关键词或正文内容"') && home.includes('home-document-search-submit'), "首页搜知识模式缺少独立文件搜索栏或范围插槽");
+assert(!home.includes('class="home-document-search-icon"'), "首页搜知识提示语前仍显示搜索图标");
+assert(suiteSource.includes("function setHomeMode(mode)") && suiteSource.includes("question.hidden=isSearch") && suiteSource.includes("documentSearch.hidden=!isSearch") && suiteSource.includes("scopeTarget=isSearch?scopeSlot:scopeHome") && suiteSource.includes("scopeTarget.prepend(scope)") && suiteSource.includes("event.key==='Enter'") && suiteSource.includes("setHomeMode(homeMode.dataset.homeMode)"), "首页模式切换未联动问答、范围下拉与文件搜索输入区或回车搜索");
+assert(/\.home-composer\.is-search-mode\s*\{[^}]*min-height:\s*0[^}]*padding:\s*0[^}]*border:\s*0[^}]*background:\s*transparent[^}]*box-shadow:\s*none/.test(suiteStyles), "首页搜知识模式仍保留大容器外观");
+assert(/\.home-composer\.is-search-mode \.home-tools\s*\{[^}]*display:\s*none/.test(suiteStyles), "首页搜知识模式仍显示容器底部工具栏");
+assert(/\.home-document-search\s*\{[^}]*grid-template-columns:\s*180px minmax\(0, 1fr\) auto/.test(suiteStyles) && /\.home-search-scope-slot\s*\{[^}]*border-right:\s*1px solid #d6dfdd/.test(suiteStyles) && !suiteStyles.includes('.home-document-search-icon'), "首页搜知识范围下拉未嵌入搜索框左端或提示语前仍保留搜索图标");
 assert(suiteStyles.includes('body[data-page="home"] .home-mode-switch') && suiteStyles.includes("width: 256px") && suiteStyles.includes("height: 40px") && suiteStyles.includes("button.is-active"), "首页模式切换缺少稳定尺寸或激活态样式");
-assert(homePageSource.includes('suite.css?v=2.38.0') && homePageSource.includes('suite.js?v=2.38.0'), "首页未刷新模式切换所需静态资源版本");
-assert(suiteSource.includes("item.uploadDept===criteria.uploadDept") && suiteSource.includes("item.dept===criteria.fileDept") && suiteSource.includes("uploadDate>=criteria.uploadStart") && suiteSource.includes("uploadDate<=criteria.uploadEnd"), "高级搜索未实现上传日期、上传部门和归属部门的组合匹配");
+assert(home.includes('href="home-2.html">切换到首页二</a>') && !homeTwo.includes('class="home-mode-switch"') && homeTwo.includes('href="home.html">切换到首页一</a>'), "首页一、首页二的模式切换或互跳入口不正确");
+assert(homeTwo.includes('aria-label="知识库范围"') && homeTwo.includes("智能起草材料") && homeTwo.includes("上传知识") && homeTwo.includes("新建文档"), "首页二未完整保留首页核心内容");
+assert(home.includes("<strong>上传知识</strong>") && homeTwo.includes("<strong>上传知识</strong>") && !home.includes("<strong>传知识</strong>") && !homeTwo.includes("<strong>传知识</strong>"), "首页一或首页二的第二项能力未统一改为上传知识");
+assert(home.includes("<strong>新建文档</strong>") && homeTwo.includes("<strong>新建文档</strong>") && !home.includes("<strong>在线协作</strong>") && !homeTwo.includes("<strong>在线协作</strong>"), "首页一或首页二的第三项能力未统一改为新建文档");
+assert(suiteStyles.includes('body[data-page="home"] .home-version-switch') && suiteStyles.includes("right: 24px") && suiteStyles.includes("bottom: 16px") && suiteStyles.includes("font-size: 12px"), "首页互跳入口未按右下角低强调样式实现");
+assert(suiteStyles.includes('.home-composer textarea::placeholder') && suiteStyles.includes('color: #9ba7a5') && suiteStyles.includes('font-size: 14px'), "首页输入提示语未使用 14px 浅色样式");
+assert(suiteSource.includes("var homeMode=e.target.closest('[data-home-mode]')") && suiteSource.includes("?'document-search-home.html':isHomeTwo?'qa-result.html':'qa-result-home.html'") && !suiteSource.includes("toast('请先描述你的需求')"), "首页模式切换或空输入发送跳转逻辑不正确");
+assert(!homeQa.includes('href="qa-result.html">AI问答</a>') && !homeQa.includes('href="document-search.html">搜知识</a>') && !homeQa.includes('href="image-search.html">搜图片</a>'), "首页一专用 AI 问答结果页仍显示模式切换");
+assert(homeQa.includes('href="home.html">‹ 返回</a>') && homeQa.includes('data-history-open') && homeQa.includes('新建会话') && homeQa.includes('class="qa-main"') && homeQa.includes('相关引用'), "首页一专用 AI 问答结果页误删了其他内容或操作");
+assert(homeDocuments.includes('href="home.html">‹ 返回</a>') && !homeDocuments.includes('href="qa-result.html">AI问答</a>') && !homeDocuments.includes('href="document-search.html">搜知识</a>') && !homeDocuments.includes('href="image-search.html">搜图片</a>') && !homeDocuments.includes('class="search-mode-actions"'), "首页一专用搜知识结果页顶部未只保留返回按钮");
+assert(homeDocuments.includes('data-advanced-search-open') && homeDocuments.includes('class="modal-mask advanced-search-modal"') && homeDocuments.includes('role="dialog"') && homeDocuments.includes('class="suite-table table-search-results'), "首页一专用搜知识结果页缺少高级搜索弹窗或结果列表");
+assert(homeDocuments.includes('<span>上传人</span>') && homeDocuments.includes('name="uploader"') && homeDocuments.includes('>全部上传人</option>') && !homeDocuments.includes('name="fileDept"'), "高级搜索未以上传人筛选替换文件归属部门筛选");
+assert(suiteSource.includes("function documentSearchHref()") && (suiteSource.match(/location\.href=documentSearchHref\(\)/g) || []).length === 2, "高级搜索提交或清空未保留当前搜知识页面变体");
+assert(/\.table-search-results:has\(> colgroup > \.col-name\):has\(> colgroup > \.col-actions\) th:last-child\s*\{[^}]*padding-right:\s*calc\(var\(--table-action-edge-gap\) \+ 62px\)[^}]*text-align:\s*right/.test(suiteStyles), "搜知识操作表头未与行内按钮组保持视觉居中");
+assert(homePageSource.includes('suite.css?v=2.97.0') && homePageSource.includes('suite.js?v=2.97.0') && homeTwoPageSource.includes('data-home-variant="two"') && homeTwoPageSource.includes('suite.css?v=2.97.0') && homeTwoPageSource.includes('suite.js?v=2.97.0') && homeQaPageSource.includes('data-qa-variant="home"') && homeQaPageSource.includes('suite.css?v=2.97.0') && homeQaPageSource.includes('suite.js?v=2.97.0') && homeDocumentPageSource.includes('data-document-variant="home"') && homeDocumentPageSource.includes('suite.css?v=2.97.0') && homeDocumentPageSource.includes('suite.js?v=2.97.0'), "首页或首页一专用结果页的静态资源版本不完整");
+assert(suiteSource.includes("item.uploadDept===criteria.uploadDept") && suiteSource.includes("item.owner===criteria.uploader") && suiteSource.includes("uploadDate>=criteria.uploadStart") && suiteSource.includes("uploadDate<=criteria.uploadEnd"), "高级搜索未实现上传日期、上传部门和上传人的组合匹配");
 assert(suiteSource.includes("请至少设置一个搜索条件") && suiteSource.includes("上传开始日期不能晚于结束日期"), "高级搜索缺少空条件或日期范围校验");
 assert(suiteSource.includes("Array.from(advancedForm.elements).forEach") && suiteSource.includes("if(field.name)field.value=''"), "高级搜索重置未清空已保存的回填条件");
 const advancedDocuments = render("documents", {
   uploadStart: "2026-07-24",
   uploadEnd: "2026-07-27",
   uploadDept: "供应链运营中心",
-  fileDept: "供应链运营中心",
+  uploader: "张三",
   type: "文档",
   scope: "部门可见",
   keyword: ""
 });
-assert(advancedDocuments.includes("高级搜索结果") && advancedDocuments.includes("共 1 条"), "高级搜索结果缺少命中数量摘要");
+assert(advancedDocuments.includes("高级搜索结果") && advancedDocuments.includes("共 1 条") && advancedDocuments.includes("上传人：张三"), "高级搜索结果缺少上传人条件或命中数量摘要");
 assert(advancedDocuments.includes("供应链运营中心年度重点工作任务清单.docx") && !advancedDocuments.includes("供应链运营季度运行分析报告.docx"), "高级搜索结果未按全部条件精确匹配");
 assert(advancedDocuments.includes("<th>上传部门</th>") && advancedDocuments.includes("<th>文件归属部门</th>") && advancedDocuments.includes("<th>上传时间</th>"), "高级搜索结果列表缺少条件核对字段");
 assert(advancedDocuments.includes("修改条件") && advancedDocuments.includes("清空条件"), "高级搜索结果缺少修改或清空条件入口");
@@ -167,17 +195,26 @@ const recent = render("recent");
 assert(recent.includes("data-select-all"), "最近使用缺少全选框");
 assert(recent.includes('data-recent-selected role="status" aria-live="polite" aria-atomic="true">已选中 0 条</span>'), "最近使用工具栏缺少可访问的已选中数量");
 assert(!recent.includes('class="view-switch"') && !recent.includes('title="列表视图"') && !recent.includes('title="宫格视图"'), "最近使用仍显示列表或宫格视图选择");
-assert(recent.includes('class="recent-summary"') && recent.includes('placeholder="搜索知识"') && recent.includes('data-recent-summary-submit') && recent.includes('data-nav="qa-result.html"'), "最近使用缺少数据展示、搜索或AI问答入口");
+assert(!recent.includes('class="knowledge-summary"') && !recent.includes('aria-label="我的知识数据展示"'), "最近使用仍显示已迁移到我的知识的数据摘要卡");
 assert(!recent.includes('placeholder="搜索我的知识"'), "最近使用仍保留顶栏搜索");
 assert(recent.includes('data-create-content-open') && recent.includes('data-toast="已打开上传任务"') && recent.includes('data-icon-name="plus"') && recent.includes('data-icon-name="uploadCloud"') && recent.includes('data-icon-name="download"') && recent.includes('data-icon-name="share"') && recent.includes('data-icon-name="trash2"'), "最近使用工具栏按钮缺少统一图标");
-assert(suiteStyles.includes(".recent-summary") && suiteStyles.includes(".recent-summary-search") && suiteStyles.includes(".recent-ai-button"), "最近使用数据展示区域样式缺失");
+assert(suiteStyles.includes(".knowledge-summary") && suiteStyles.includes(".knowledge-summary-search") && suiteStyles.includes(".knowledge-summary-submit") && !suiteStyles.includes(".recent-ai-button"), "我的知识数据展示区域样式不完整或仍保留AI问答按钮样式");
 assert((recent.match(/data-recent-bulk/g) || []).length === 3 && recent.includes("data-recent-bulk disabled data-toast=\"已下载所选文件\"") && recent.includes("data-recent-bulk data-recent-share-submit disabled") && recent.includes("data-recent-bulk disabled data-toast=\"所选记录已删除\""), "最近使用下载、共享提报或删除缺少默认禁用态");
 assert(recent.indexOf("data-create-content-open") < recent.indexOf('data-toast="已下载所选文件"') && recent.indexOf('data-toast="已下载所选文件"') < recent.indexOf("data-recent-share-submit") && recent.indexOf("data-recent-share-submit") < recent.indexOf('data-toast="所选记录已删除"'), "最近使用工具栏按钮顺序不正确");
 assert(recent.includes("data-recent-table") && suiteSource.includes("recentSelected.textContent='已选中 '+checked.length+' 条'") && suiteSource.includes("document.querySelectorAll('[data-recent-bulk]').forEach"), "最近使用已选数量或批量按钮未接入勾选状态");
-assert(suiteSource.includes('id="shareSubmissionModal"') && suiteSource.includes('id="shareSubmissionDescription"') && suiteSource.includes('type="hidden" name="shareDirectory"') && suiteSource.includes('data-share-directory-add') && suiteSource.includes("openShareSubmission(recentShareSubmit,recentItems)"), "最近使用共享提报缺少共用弹窗、逐项增加目录、共享说明或批量入口绑定");
+assert(suiteSource.includes('id="shareSubmissionModal"') && suiteSource.includes('id="shareSubmissionDescription"') && suiteSource.includes('type="hidden" name="shareDirectory"') && suiteSource.includes('data-share-directory-add') && suiteSource.includes("openShareSubmission(recentShareSubmit,selectedActionItems"), "最近使用共享提报缺少共用弹窗、逐项增加目录、共享说明或批量入口绑定");
 assert(suiteSource.includes("window.BompDepartmentDirectoryData||[]") && suiteSource.includes("window.BompCompanyDirectoryData||[]") && suiteSource.includes("data-share-directory-search"), "共享提报目录未复用公共部门、公司目录数据或缺少目录搜索");
 assert(suiteSource.includes("submissionDirectories=Array.from") && suiteSource.includes("showShareSubmissionSuccess()") && suiteSource.includes('href="my-sharing.html"'), "最近使用共享提报缺少多目录校验、提交成功反馈或共享进度入口");
-assert(/\[data-recent-bulk\]:disabled\s*\{[^}]*cursor:\s*not-allowed/.test(suiteStyles), "最近使用批量按钮缺少明确禁用样式");
+assert(suiteSource.includes('id="shareModal"') && suiteSource.includes('data-share-person') && suiteSource.includes('data-share-error') && suiteSource.includes('openShareModal(share,actionItemFromTrigger(share))'), "分享操作缺少人员、权限或表单校验弹窗");
+const sharePeopleData = suiteSource.match(/var shareDepartments=\[([\s\S]*?)\n  \];/);
+assert(sharePeopleData && (sharePeopleData[1].match(/name:'/g) || []).length === 3 && (sharePeopleData[1].match(/,'\d{5}'\]/g) || []).length === 30, "分享弹窗未提供 3 个部门、每部门 10 人的演示数据");
+assert(suiteSource.includes('id="shareDepartmentSelect"') && suiteSource.includes('id="sharePersonSelect"') && suiteSource.includes('data-share-person-add') && suiteSource.includes('function updateSharePersonOptions()') && suiteSource.includes('function addSharePersonFromSelect()'), "分享弹窗缺少部门到人员的级联选择或添加交互");
+assert(suiteSource.includes("data-person-search=\"'+escapeHtml([person.name,person.department,person.team,person.employeeId].join(' '))") && suiteSource.includes("e.target.matches('#sharePeopleSearch')"), "分享接收人搜索未覆盖姓名、部门、专业和工号");
+assert(suiteSource.includes("var meaningfulSize=item.size&&item.size!=='-'&&item.size!=='--'") && suiteSource.includes("size.hidden=!meaningfulSize"), "分享文件夹仍显示无意义的大小占位");
+assert(suiteStyles.includes('.share-people-cascade') && suiteStyles.includes('grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr) auto'), "分享弹窗级联选择缺少稳定布局");
+assert(suiteSource.includes('id="copyModal"') && suiteSource.includes('id="copyForm"') && suiteSource.includes('data-copy-open') && suiteSource.includes("toast('副本“'+copyName+'”已创建"), "创建副本操作缺少名称、保存位置或成功反馈弹窗");
+assert(!suiteSource.includes('data-toast="已提交共享审核"') && !suiteSource.includes('data-toast="文件副本已创建"') && !suiteSource.includes('data-toast="副本已创建"'), "分享提报或创建副本仍存在仅显示提示的占位入口");
+assert(/\[data-recent-bulk\]:disabled,\s*\.suite-toolbar \[data-knowledge-bulk\]:disabled,\s*\.suite-toolbar \[data-collaboration-bulk\]:disabled,\s*\.suite-toolbar \[data-recycle-bulk\]:disabled\s*\{[^}]*cursor:\s*not-allowed/.test(suiteStyles), "最近使用、我的知识、我的协作或回收站批量按钮缺少明确禁用样式");
 assert(/\.recent-selected-count\s*\{[^}]*min-width:\s*78px[^}]*font-variant-numeric:\s*tabular-nums[^}]*white-space:\s*nowrap/.test(suiteStyles), "最近使用已选数量缺少稳定宽度或数字样式");
 const overflowMenu = suiteSource.match(/function openMenu\(trigger\)\{[\s\S]*?\n  function closeMenu/);
 assert(overflowMenu && overflowMenu[0].includes("data-share-submit-single") && overflowMenu[0].includes("icon('uploadCloud',16)+'共享提报"), "最近使用更多菜单缺少共享提报弹窗入口");
@@ -185,7 +222,7 @@ assert(suiteSource.includes('data-create-content-open') && suiteSource.includes(
 assert(suiteSource.includes('name="createType" value="文档"') && suiteSource.includes('name="createType" value="表格"') && suiteSource.includes('name="createType" value="PPT"'), "新建内容弹窗缺少文档、表格或PPT类型");
 assert(suiteSource.includes('不选择目录（保存至我的知识库）') && suiteSource.includes('data-create-folder-confirm'), "新建内容弹窗缺少可选目录或新建文件夹能力");
 assert(suiteStyles.includes('.create-type-grid') && suiteStyles.includes('.create-folder-editor'), "新建内容弹窗样式缺失");
-assert(overflowMenu[0].includes("创建副本</button>'+shareSubmitAction+((isCollaboration?canManage:canEdit)?'<button data-toast=\"权限管理已打开\""), "最近使用更多菜单的共享提报位置或权限管理分支不正确");
+assert(overflowMenu[0].includes("copyAction=page==='knowledge'?'':'<button data-copy-open") && overflowMenu[0].includes("'+copyAction+shareSubmitAction+((isCollaboration?canManage:canEdit)?'<button data-toast=\"权限管理已打开\""), "我的知识未移除创建副本，或其他页面的共享提报与权限管理分支不正确");
 assert(!recent.includes("<th>类型</th>") && recent.includes("<th>来源</th>") && recent.includes("<th>文件大小</th>") && recent.includes("<th>文件位置</th>") && recent.includes("<th>最近访问时间</th>"), "最近使用字段不正确");
 assert(["他人分享", "我的知识", "部门知识库", "公司知识库"].every((source) => recent.includes(`>${source}<`)), "最近使用来源字段不完整");
 assert(recent.indexOf("<th>名称</th>") < recent.indexOf("<th>文件大小</th>") && recent.indexOf("<th>文件大小</th>") < recent.indexOf("<th>最近访问时间</th>") && recent.indexOf("<th>最近访问时间</th>") < recent.indexOf("<th>来源</th>") && recent.indexOf("<th>来源</th>") < recent.indexOf("<th>文件位置</th>") && recent.indexOf("<th>文件位置</th>") < recent.indexOf("<th>操作</th>"), "最近使用字段顺序不正确");
@@ -207,16 +244,37 @@ assert(/\.toolbar-select\.is-active\s*\{[^}]*border-color:\s*var\(--color-primar
 assert(suiteSource.includes("label+'：'"), "筛选下拉框缺少类别与选中值组合显示");
 
 const knowledge = render("knowledge");
-assert(knowledge.includes("文件夹") && knowledge.includes("共享范围") && knowledge.includes("创建时间") && !knowledge.includes("<th>类型</th>"), "我的知识字段不正确");
+const knowledgeTopbar = knowledge.match(/<header class="suite-topbar personal-library-topbar">[\s\S]*?<\/header>/)?.[0] || "";
+const knowledgeListStart = knowledge.indexOf('<section class="personal-library-list-panel" aria-label="我的知识列表">');
+const knowledgeToolbarEnd = knowledge.indexOf('<div class="suite-table-wrap">', knowledgeListStart);
+const knowledgeToolbar = knowledge.slice(knowledgeListStart, knowledgeToolbarEnd);
+assert(knowledge.includes('class="knowledge-summary"') && knowledge.includes('aria-label="我的知识数据展示"') && knowledge.includes('placeholder="搜索我的知识"') && knowledge.includes('data-knowledge-summary-submit') && knowledge.includes('> 搜索</button>'), "我的知识缺少迁移后的数据展示或搜索按钮");
+assert(!knowledgeTopbar.includes('personal-library-page-actions') && !knowledgeTopbar.includes('data-create-content-open') && !knowledgeTopbar.includes('data-toast="已打开上传任务"'), "我的知识顶部横条仍保留新建或上传");
+assert(knowledgeToolbar.includes('data-knowledge-selected role="status" aria-live="polite" aria-atomic="true">已选中 0 条</span>') && knowledgeToolbar.indexOf('data-knowledge-selected') < knowledgeToolbar.indexOf('> 新建</button>'), "我的知识列表工具栏缺少左侧已选数量");
+assert(knowledgeToolbar.includes('data-create-content-open') && knowledgeToolbar.includes('> 新建</button>') && knowledgeToolbar.includes('data-toast="已打开上传任务"') && knowledgeToolbar.includes('> 上传</button>'), "我的知识列表工具栏缺少新建或上传");
+assert(knowledgeToolbar.indexOf('> 新建</button>') < knowledgeToolbar.indexOf('> 上传</button>') && knowledgeToolbar.indexOf('> 上传</button>') < knowledgeToolbar.indexOf('> 创建文件夹</button>'), "我的知识列表工具栏的新建、上传或创建文件夹顺序不正确");
+assert(!knowledge.includes('data-nav="qa-result.html">AI问答') && !knowledge.includes('class="recent-ai-button"'), "我的知识数据展示仍保留AI问答入口");
+assert(knowledge.indexOf('class="knowledge-summary"') < knowledge.indexOf('aria-label="我的知识列表"'), "我的知识数据展示未位于列表工作区上方");
+assert(knowledge.includes("文件夹") && knowledge.includes("共享范围") && knowledge.includes("创建时间") && !knowledge.includes("<th>类型</th>") && !knowledge.includes("<th>大小</th>"), "我的知识字段不正确");
+assert(!knowledge.includes('class="view-switch"') && !knowledge.includes('aria-label="视图切换"'), "我的知识仍显示列表或宫格视图切换");
+assert(knowledge.indexOf("<th>名称</th>") < knowledge.indexOf("<th>创建时间</th>") && knowledge.indexOf("<th>创建时间</th>") < knowledge.indexOf("<th>共享范围</th>"), "我的知识创建时间未紧邻名称列");
+assert(!/<table class="suite-table table-knowledge"[\s\S]*?<col class="col-size">[\s\S]*?<\/table>/.test(knowledge), "我的知识仍包含大小列定义");
+assert(/<td class="time-cell" title="2026-07-18 14:20">2026-07-18 14:20<\/td>/.test(knowledge), "我的知识创建时间未完整展示");
+assert(/\.table-knowledge \.col-time\s*\{[^}]*width:\s*18%/.test(suiteStyles) && /\.table-knowledge \.time-cell\s*\{[^}]*white-space:\s*nowrap[^}]*font-variant-numeric:\s*tabular-nums/.test(suiteStyles), "我的知识创建时间列宽或单行样式不正确");
+const knowledgeFolderRows = [...knowledge.matchAll(/<tr[^>]*data-folder="true"[^>]*>[\s\S]*?<\/tr>/g)].map((match) => match[0]);
+assert(knowledgeFolderRows.length === 2 && knowledgeFolderRows.every((row) => !row.includes(">下载<") && row.includes(">分享<") && row.includes(">删除<")), "我的知识文件夹行仍显示下载或缺少保留操作");
+assert(/<tr[^>]*data-folder="false"[^>]*>[\s\S]*?>下载<[\s\S]*?<\/tr>/.test(knowledge), "我的知识普通文件行缺少下载操作");
+assert(knowledge.includes('data-filter-table data-knowledge-table') && suiteSource.includes("if(table.matches('[data-knowledge-table]'))") && suiteSource.includes("knowledgeSelected.textContent='已选中 '+checked.length+' 条'"), "我的知识已选数量未接入列表选择状态");
 assert(/\.table-knowledge:has\(> colgroup > \.col-name\):has\(> colgroup > \.col-actions\) th:last-child\s*\{[^}]*padding-right:\s*var\(--table-cell-padding-inline\)[^}]*text-align:\s*center/.test(suiteStyles), "我的知识操作列表头未在列内居中");
 assert(/\.table-knowledge td:last-child\s*\{[^}]*text-align:\s*right/.test(suiteStyles) && /\.table-knowledge td:last-child \.row-actions\s*\{[^}]*justify-content:\s*flex-end/.test(suiteStyles), "我的知识行内操作未固定在列表右端");
-assert(knowledge.includes("待审核") && knowledge.includes("已发布") && knowledge.includes("协作分享") && knowledge.includes("私有草稿"), "我的知识状态不完整");
-assert(suiteSource.includes('function folderAssetIcon') && suiteSource.includes('item.type==="folder"?folderAssetIcon(22)') && suiteSource.includes('src="assets/folder-1.png"'), "我的知识文件夹图标未使用素材图片1");
+assert(knowledge.includes("待审核") && knowledge.includes("已发布") && knowledge.includes("协作分享") && knowledge.includes("私有") && !knowledge.includes("私有草稿"), "我的知识状态文案不完整或仍显示私有草稿");
+assert(knowledge.includes('data-status="私有"') && knowledgeToolbar.includes('<option value="私有">私有</option>'), "我的知识私有状态与筛选值未统一");
+assert(suiteSource.includes('function folderAssetIcon') && suiteSource.includes('if(item.type==="folder")return folderAssetIcon(22)') && suiteSource.includes('src="assets/folder-1.png"'), "我的知识文件夹图标未使用素材图片1");
 assert(/\.folder-list-asset\s*\{[^}]*width:\s*22px[^}]*height:\s*22px[^}]*object-fit:\s*contain/.test(suiteStyles), "我的知识文件夹素材图标尺寸样式缺失");
 [
   ["status-published", "已发布"],
   ["status-review", "待审核"],
-  ["status-draft", "私有草稿"],
+  ["status-draft", "私有"],
   ["status-collaboration", "协作分享"]
 ].forEach(([className, label]) => {
   assert(knowledge.includes(`knowledge-status ${className}\">${label}`), `我的知识${label}状态缺少语义样式`);
@@ -235,10 +293,23 @@ assert(knowledge.includes('title="部门知识库 /') && !knowledge.includes('>�
 assert(knowledge.includes("data-filter-display>共享范围</span>") && knowledge.includes("data-filter-display>状态</span>"), "我的知识筛选默认文案不正确");
 
 const collaboration = render("collaboration");
+const collaborationTopbar = collaboration.match(/<header class="suite-topbar personal-library-topbar">[\s\S]*?<\/header>/)?.[0] || "";
+const collaborationToolbarStart = collaboration.indexOf('<div class="suite-toolbar">');
+const collaborationTableStart = collaboration.indexOf('<div class="suite-table-wrap">', collaborationToolbarStart);
+const collaborationToolbar = collaboration.slice(collaborationToolbarStart, collaborationTableStart);
 assert(collaboration.includes("全部（") && collaboration.includes("分享给我（") && collaboration.includes("我分享的（"), "我的协作缺少视图页签");
+assert(collaboration.includes('class="collaboration-tabs status-tabs" role="group" aria-label="协作范围"') && collaboration.includes('class="is-active" type="button" aria-pressed="true"') && (collaboration.match(/aria-pressed="false"/g) || []).length === 2, "我的协作范围页签缺少可访问的选中状态");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs,\s*body\[data-page="uploads"\] \.status-tabs,\s*body\[data-page="sharing"\] \.status-tabs\s*\{[^}]*height:\s*56px[^}]*gap:\s*32px[^}]*border-bottom:\s*1px solid #dfe6e4[^}]*border-radius:\s*0[^}]*background:\s*#fff/.test(suiteStyles), "我的协作范围页签未使用白底与底部分隔线样式");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs button\.is-active,\s*body\[data-page="uploads"\] \.status-tabs button\.is-active,\s*body\[data-page="sharing"\] \.status-tabs button\.is-active\s*\{[^}]*color:\s*var\(--color-primary\)[^}]*font-weight:\s*600/.test(suiteStyles) && /body\[data-page="collaboration"\] \.collaboration-tabs button\.is-active::after,\s*body\[data-page="uploads"\] \.status-tabs button\.is-active::after,\s*body\[data-page="sharing"\] \.status-tabs button\.is-active::after\s*\{[^}]*height:\s*3px[^}]*background:\s*var\(--color-primary\)/.test(suiteStyles), "我的协作当前页签未使用项目主色文字与短下划线");
+assert(suiteSource.includes("button.setAttribute('aria-pressed',String(isSelected))"), "我的协作页签切换未同步可访问选中状态");
 assert(!collaboration.includes('class="view-switch"') && !collaboration.includes('title="列表视图"') && !collaboration.includes('title="宫格视图"'), "我的协作仍显示列表或宫格视图选择");
 assert(!collaboration.includes("data-reset-filter") && !collaboration.includes(">重置<"), "我的协作仍显示重置按钮");
 assert(collaboration.includes("data-collaboration-table") && collaboration.includes("data-select-all") && collaboration.includes("data-row-select"), "我的协作缺少表头全选或行复选框");
+assert(collaborationToolbar.includes('data-collaboration-selected role="status" aria-live="polite" aria-atomic="true">已选中 0 条</span>') && collaborationToolbar.includes('data-create-content-open') && (collaborationToolbar.match(/data-collaboration-bulk disabled/g) || []).length === 2, "我的协作缺少已选数量、新建、下载或删除批量操作");
+assert(collaborationToolbar.indexOf('data-collaboration-selected') < collaborationToolbar.indexOf('> 新建</button>') && collaborationToolbar.indexOf('> 新建</button>') < collaborationToolbar.indexOf('> 下载</button>') && collaborationToolbar.indexOf('> 下载</button>') < collaborationToolbar.indexOf('> 删除</button>'), "我的协作左侧工具栏顺序不正确");
+assert(/<div class="toolbar-right">[\s\S]*?data-filter-key="permission"[\s\S]*?data-filter-key="type"/.test(collaborationToolbar), "我的协作筛选未放在工具栏右侧");
+assert(!collaborationTopbar.includes('personal-library-page-actions') && !collaborationTopbar.includes('data-create-content-open') && !collaborationTopbar.includes('data-toast="已打开上传任务"') && !collaborationTopbar.includes('> 上传</button>'), "我的协作顶部横条仍显示新建或上传");
+assert(suiteSource.includes("if(table.matches('[data-collaboration-table]'))") && suiteSource.includes("collaborationSelected.textContent='已选中 '+checked.length+' 条'") && suiteSource.includes("document.querySelectorAll('[data-collaboration-bulk]')"), "我的协作选择计数或批量按钮未接入选择状态");
 assert(collaboration.indexOf('class="col-check"') < collaboration.indexOf('class="col-name"') && collaboration.indexOf('data-select-all') < collaboration.indexOf("<th>名称</th>"), "我的协作复选框列未放在名称列前");
 assert(/\.table-collaboration \.col-check,[\s\S]*?width:\s*4%/.test(suiteStyles) && /\.table-collaboration \.col-name\s*\{[^}]*width:\s*auto/.test(suiteStyles), "我的协作复选框或名称列宽不正确");
 assert(/\.table-collaboration:has\(> colgroup > \.col-name\):has\(> colgroup > \.col-actions\) th:last-child\s*\{[^}]*padding-right:\s*var\(--table-cell-padding-inline\)[^}]*text-align:\s*center/.test(suiteStyles), "我的协作操作列表头未在列内居中");
@@ -246,43 +317,72 @@ assert(collaboration.includes("<th>文件大小</th>") && collaboration.includes
 const readOnlyRow = collaboration.match(/<tr[^>]*data-permission="仅查看"[\s\S]*?<\/tr>/);
 assert(readOnlyRow && !readOnlyRow[0].includes(">编辑<"), "仅查看协作文件仍提供编辑操作");
 assert(collaboration.includes('data-permission="仅查看"') && collaboration.includes('data-permission="可管理"') && collaboration.includes('data-permission="可编辑"') && collaboration.includes('data-permission="创建人"') && collaboration.includes('data-permission="可查看"'), "我的协作更多菜单缺少权限上下文");
-assert(suiteSource.includes('canManage=isCollaboration&&permission==="可管理"') && suiteSource.includes("canManage?'<button data-toast=\"已提交共享审核\"") && suiteSource.includes("(isCollaboration?canManage:canEdit)?'<button data-toast=\"权限管理已打开\""), "我的协作共享提报或权限管理未限制为可管理权限");
+assert(suiteSource.includes('canManage=isCollaboration&&permission==="可管理"') && suiteSource.includes("shareSubmitAction=(page==='recent'||canManage)?'<button data-share-submit-single") && suiteSource.includes("(isCollaboration?canManage:canEdit)?'<button data-toast=\"权限管理已打开\""), "我的协作共享提报或权限管理未限制为可管理权限");
 assert(!collaboration.includes("相关度排序") && !collaboration.includes("文件格式"), "我的协作仍包含已移除筛选");
 
 const favorites = render("favorites");
-["下载", "分享", "取消收藏", "创建副本", "反馈"].forEach((action) => assert(favorites.includes(`>${action}<`), `我的收藏缺少${action}操作`));
+assert(!favorites.includes('class="view-switch"') && !favorites.includes('aria-label="视图切换"') && !favorites.includes('title="列表视图"') && !favorites.includes('title="宫格视图"'), "我的收藏仍显示列表或宫格视图切换");
+const favoriteActions = favorites.match(/<div class="row-actions favorite-actions">[\s\S]*?<\/div>/);
+assert(favoriteActions && ["下载", "分享", "删除"].every((action) => favoriteActions[0].includes(`>${action}<`)) && favoriteActions[0].includes("data-more"), "我的收藏行内操作未保留下载、分享、删除和更多入口");
+assert(!favoriteActions[0].includes(">取消收藏<") && !favoriteActions[0].includes(">创建副本<") && !favoriteActions[0].includes(">反馈<"), "我的收藏次要操作仍平铺在列表中");
+assert(suiteSource.includes("isFavorites=page==='favorites'") && suiteSource.includes("icon('star',16)+'取消收藏") && suiteSource.includes("icon('copy',16)+'创建副本") && suiteSource.includes("icon('messageSquare',16)+'反馈"), "我的收藏更多菜单缺少取消收藏、创建副本或反馈");
 assert(favorites.includes("favorites-bulk-actions") && favorites.includes('data-toast="已下载所选收藏"') && favorites.includes('data-toast="已取消所选收藏"') && favorites.includes('data-toast="所选收藏已删除"'), "我的收藏工具栏缺少下载、取消收藏或删除按钮");
 assert(favorites.indexOf("favorites-bulk-actions") < favorites.indexOf("<div class=\"toolbar-right\">"), "我的收藏筛选栏未放在右侧");
 assert(favorites.includes('data-favorites-selected role="status" aria-live="polite" aria-atomic="true">已选中 0 条</span>') && favorites.includes("data-favorites-table") && favorites.includes("data-select-all") && favorites.includes("data-row-select"), "我的收藏缺少已选数量或列表选择控件");
 assert(suiteSource.includes("table.matches('[data-favorites-table]')") && suiteSource.includes("data-favorites-bulk"), "我的收藏选择状态未联动工具栏按钮");
 assert(!favorites.includes("<th>类型</th>") && !favorites.includes('class="col-type"') && favorites.includes('data-type="'), "我的收藏类型列未移除或类型筛选数据缺失");
 assert(favorites.includes("<th>文件位置</th>") && favorites.includes("公司知识库 /") && favorites.includes("部门知识库 /"), "我的收藏文件位置不符合公开范围");
+const favoritesPageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "my-favorites.html"), "utf8");
+assert(favoritesPageSource.includes('suite.css?v=2.102.0') && favoritesPageSource.includes('suite.js?v=2.102.0'), "我的收藏未刷新顶部与内容间距资源版本");
 
 const sharing = render("sharing");
 assert(sharing.includes("最近7天") && sharing.includes("最近15天") && sharing.includes("最近30天"), "共享统计缺少提报时间选项");
 assert(sharing.includes("公司知识库 /") && sharing.includes("部门知识库 /"), "共享统计目标目录缺少完整层级");
+assert(sharing.includes('class="status-tabs" role="group" aria-label="共享审核状态"') && sharing.includes('class="is-active" type="button" aria-pressed="true" data-status-filter=""') && (sharing.match(/aria-pressed="false"/g) || []).length === 3, "我的共享状态页签缺少可访问的选中状态");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs,\s*body\[data-page="uploads"\] \.status-tabs,\s*body\[data-page="sharing"\] \.status-tabs\s*\{[^}]*height:\s*56px[^}]*justify-content:\s*flex-start[^}]*gap:\s*32px[^}]*border-bottom:\s*1px solid #dfe6e4[^}]*border-radius:\s*0[^}]*background:\s*#fff/.test(suiteStyles), "我的共享状态页签未复用白底轻量页签容器样式");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs button,\s*body\[data-page="uploads"\] \.status-tabs button,\s*body\[data-page="sharing"\] \.status-tabs button\s*\{[^}]*flex:\s*0 0 auto[^}]*font-size:\s*16px/.test(suiteStyles), "我的共享状态页签未使用内容宽度或 16px 字号");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs button\.is-active,\s*body\[data-page="uploads"\] \.status-tabs button\.is-active,\s*body\[data-page="sharing"\] \.status-tabs button\.is-active\s*\{[^}]*color:\s*var\(--color-primary\)[^}]*font-weight:\s*600/.test(suiteStyles) && /body\[data-page="collaboration"\] \.collaboration-tabs button\.is-active::after,\s*body\[data-page="uploads"\] \.status-tabs button\.is-active::after,\s*body\[data-page="sharing"\] \.status-tabs button\.is-active::after\s*\{[^}]*height:\s*3px[^}]*background:\s*var\(--color-primary\)/.test(suiteStyles), "我的共享当前页签未使用项目主色文字与 3px 短下划线");
+assert(!/body\[data-page="sharing"\] \.status-tabs button \+ button\s*\{[^}]*border-left/.test(suiteStyles) && !/body\[data-page="sharing"\] \.status-tabs button\s*\{[^}]*flex:\s*0 0 148px/.test(suiteStyles), "我的共享状态页签仍保留竖向分隔线或等宽分段");
+assert(suiteSource.includes("if(button.hasAttribute('aria-pressed'))button.setAttribute('aria-pressed',String(isSelected))"), "我的共享页签切换未同步可访问选中状态");
 
 const uploads = render("uploads");
 assert(uploads.includes("<th>上传时间</th>"), "我的上传缺少上传时间字段");
 assert(!uploads.includes("<th>智能处理结果</th>") && !uploads.includes('class="col-result"') && !uploads.includes('class="result-text"'), "我的上传仍显示智能处理结果字段");
-assert(uploads.includes(">批量确认<") && uploads.includes(">批量修改<"), "我的上传全部视图缺少批量操作");
+assert(uploads.includes("> 上传</button>") && uploads.includes(">批量确认<") && uploads.includes(">批量修改<"), "我的上传全部视图缺少上传或批量操作");
+assert(uploads.includes('data-upload-selected role="status" aria-live="polite" aria-atomic="true">已选中 0 条</span>') && uploads.includes('data-filter-table data-upload-table data-upload-filter='), "我的上传缺少已选数量或选择状态表格标识");
+assert(uploads.indexOf('data-upload-selected') < uploads.indexOf('> 上传</button>') && uploads.indexOf('> 上传</button>') < uploads.indexOf('>批量确认<') && uploads.indexOf('>批量确认<') < uploads.indexOf('>批量修改<') && uploads.indexOf('>批量修改<') < uploads.indexOf('>删除<'), "我的上传已选数量、上传或批量按钮顺序不正确");
+const uploadsTopbar = uploads.slice(0, uploads.indexOf('<div class="suite-content">'));
+assert(!uploadsTopbar.includes('personal-library-page-actions') && !uploadsTopbar.includes('> 新建</button>') && !uploadsTopbar.includes('> 上传</button>'), "我的上传顶部横条仍显示新建或上传");
+assert(suiteSource.includes("if(table.matches('[data-upload-table]'))") && suiteSource.includes("uploadSelected.textContent='已选中 '+checked.length+' 条'"), "我的上传已选数量未接入选择状态");
 assert(uploads.includes("最近7天") && uploads.includes("最近15天") && uploads.includes("最近30天"), "我的上传缺少时间选项");
 assert(uploads.includes("data-filter-display>上传时间</span>"), "我的上传时间筛选默认文案不正确");
 assert(/\.table-uploads \.col-name\s*\{[^}]*width:\s*auto/.test(suiteStyles) && /\.table-uploads \.col-size\s*\{[^}]*width:\s*10%/.test(suiteStyles) && /\.table-uploads \.col-time\s*\{[^}]*width:\s*15%/.test(suiteStyles) && /\.table-uploads \.col-status\s*\{[^}]*width:\s*13%/.test(suiteStyles) && /\.table-uploads \.col-actions\s*\{[^}]*width:\s*22%/.test(suiteStyles), "我的上传列宽未按信息优先级向左收紧");
+assert(/body\[data-page="uploads"\] \.suite-toolbar \.suite-search input\s*\{[^}]*border-radius:\s*3px/.test(suiteStyles), "我的上传列表搜索框未使用 3px 圆角");
 
 const department = render("department");
-assert(department.includes("当前目录") && department.includes("架构管理") && department.includes("包含全部下级目录文件"), "部门知识库缺少当前一级目录聚合信息");
+assert(department.includes('class="library-breadcrumb"') && department.includes('aria-label="当前目录路径"') && department.includes('>部门知识库</button>') && department.includes('aria-current="page" title="架构管理">架构管理</span>'), "部门知识库缺少可回退的当前层级面包屑");
+assert(!department.includes('<th>所属专业</th>') && !department.includes('<col class="col-major">') && !department.includes('<th>版本</th>') && !department.includes('<col class="col-version">'), "部门知识库仍显示所属专业或版本字段");
 assert(/\.table-library-department:has\(> colgroup > \.col-name\):has\(> colgroup > \.col-actions\) th:last-child\s*\{[^}]*padding-right:\s*var\(--table-cell-padding-inline\)[^}]*padding-left:\s*calc\(var\(--table-cell-padding-inline\) \+ clamp\(0px, calc\(\(100vw - 1280px\) \* 0\.075\), 48px\)\)[^}]*text-align:\s*center/.test(suiteStyles), "部门知识库操作列表头未按桌面宽度与行内按钮组视觉居中");
 assert(department.includes('<header class="suite-topbar library-topbar"><div class="library-directory-context"') && !department.includes('class="suite-crumb"'), "部门知识库未移除面包屑或未将目录信息移入顶部栏");
 assert(!department.includes('<div class="suite-content"><div class="library-directory-context"'), "部门知识库内容区仍保留重复目录信息");
-assert(department.includes("供应链业务架构管理") && department.includes("业务架构资产"), "部门知识库一级目录未聚合下级目录文件");
-assert(suiteSource.includes("directory.children.length") && suiteSource.includes("仅展示当前目录文件"), "部门知识库缺少一级聚合与二级目录范围逻辑");
-assert(suiteSource.includes("location.hash=e.detail.key") && suiteSource.includes("renderLibrary('department',e.detail.key)"), "部门目录选择未驱动右侧文件列表更新");
-assert(department.includes('title="部门知识库 / 供应链运营中心 /') && !department.includes('>部门知识库 / 供应链运营中心 /'), "部门知识库文件位置未使用末级目录显示和完整路径提示");
+assert(department.includes('data-library-kind="folder"') && department.includes("供应链业务架构管理") && !department.includes('data-library-kind="file"'), "部门知识库一级目录未仅展示直接二级目录");
+assert(!department.includes('> 新建文件夹</button>') && !department.includes('> 批量下载</button>') && !department.includes('> 上传</button>'), "部门知识库目录层仍显示普通用户无权的操作");
+assert(suiteSource.includes("function libraryToolbar(scope,directory,files)") && suiteSource.includes("viewSwitch=scope==='company'?listViewSwitch():''") && suiteSource.includes("libraryToolbar(scope,directory,files)"), "部门知识库未固定列表视图或工具栏未按知识库类型分支");
+assert(!suiteSource.includes("data-toast=\"新建文件夹窗口已打开\"") && suiteSource.includes("companySearch=scope==='company'?searchBox('搜索公司知识库')") && suiteSource.includes("uploadAction=scope==='company'?'<button class=\"btn btn-primary\"") && suiteSource.includes("left=companySearch+(hasChildren?'':uploadAction+'<button class=\"btn\" type=\"button\" data-toast=\"所选文件已批量下载\""), "公共部门或公司知识库仍生成新建文件夹，或公司搜索与叶子层操作分支不正确");
+assert(suiteSource.includes('function libraryUploadTimeSelect()') && suiteSource.includes('<option value="today">今天</option>') && suiteSource.includes('<option value="7">近7天</option>') && suiteSource.includes('<option value="30">近30天</option>') && suiteSource.includes('<option value="quarter">本季度</option>') && suiteSource.includes('<option value="year">今年</option>') && suiteSource.includes('<option value="lastYear">去年</option>'), "部门知识库上传时间下拉选项不完整");
+assert(suiteSource.includes("uploadTimeFilter=scope==='department'?libraryUploadTimeSelect()") && suiteSource.includes('data-upload-date=') && suiteSource.includes('function libraryUploadTimeMatches(dateValue,filterValue)') && suiteSource.includes("row.dataset.libraryKind==='folder'||libraryUploadTimeMatches"), "部门知识库上传时间筛选未接入列表或未保留目录行");
+assert(!suiteSource.includes("topActions=scope==='company'") && suiteSource.includes("departmentSearch=scope==='department'?searchBox('搜索部门知识库')") && suiteSource.includes("right=filters||departmentSearch?'<div class=\"toolbar-right\">'+filters+departmentSearch"), "部门或公司知识库搜索框仍位于顶部栏，或部门筛选区布局被误改");
+assert(suiteSource.includes("folderRows+fileRows") && suiteSource.includes("directory.children.length?2:8") && suiteSource.includes("directory.isRoot||directory.pathNodes.length<2"), "部门和公司知识库缺少文件夹优先、混合列表或叶子文件规则");
+assert(suiteSource.includes("hasChildren=directory.children.length>0") && suiteSource.includes("新建文件夹") && suiteSource.includes("上传窗口已打开") && suiteSource.includes("所选文件已批量下载"), "知识库工具栏未按目录或叶子层级切换操作");
+assert(suiteSource.includes("bindKnowledgeLibraryParentSelection") && suiteSource.includes("event.stopImmediatePropagation()") && suiteSource.includes("sidebar.activateItem(item.dataset.key)"), "侧栏深层父目录仍可能自动跳入首个子节点");
+assert(suiteSource.includes("var libraryTarget=e.target.closest('[data-library-target]')") && suiteSource.includes("navigateLibrary(libraryScope,libraryKey)"), "知识库文件夹行或面包屑未驱动目录、侧栏与右侧内容联动");
 const company = render("company");
-assert(company.includes("当前目录") && company.includes("供应链运营中心") && company.includes("公司知识库 /"), "公司知识库目录未驱动右侧内容");
-assert(suiteSource.includes("renderLibrary('company',e.detail.key)"), "公司知识库目录切换仍需整页刷新");
-assert(company.includes('title="公司知识库 /') && !company.includes('>公司知识库 /'), "公司知识库文件位置未使用末级目录显示和完整路径提示");
+assert(company.includes('<th>所属专业</th>') && company.includes('<col class="col-major">') && company.includes('<th>版本</th>') && company.includes('<col class="col-version">'), "公司知识库的所属专业或版本字段被误删");
+assert(company.includes('class="library-breadcrumb"') && company.includes('>公司知识库</button>') && company.includes('aria-current="page" title="核心业务">核心业务</span>'), "公司知识库缺少可回退的当前层级面包屑");
+assert(company.includes('data-library-kind="folder"') && company.includes("数字化专业") && !company.includes('data-library-kind="file"'), "公司知识库一级目录未仅展示直接二级目录");
+assert(!company.includes('> 新建文件夹</button>') && !company.includes('> 批量下载</button>') && company.includes('class="suite-toolbar library-toolbar"') && company.indexOf('class="suite-toolbar library-toolbar"') < company.indexOf('class="suite-table-wrap library-table-wrap"') && company.includes('placeholder="搜索公司知识库"'), "公司知识库目录层仍显示无权操作，或搜索未移至列表左上角");
+assert(/body\[data-page="company"\] \.library-toolbar \.suite-search input\s*\{[^}]*border-radius:\s*3px/.test(suiteStyles), "公司知识库列表搜索框未使用 3px 圆角");
+assert(suiteSource.includes("if(page==='company')navigateLibrary('company',e.detail.key)"), "公司知识库目录切换仍需整页刷新");
 
 const review = render("review");
 assert(review.includes("全部 <b>136</b>") && review.includes("待审核 <b>36</b>") && review.includes("已通过 <b>78</b>") && review.includes("已退回 <b>16</b>"), "审核工作台状态视图不完整");
@@ -291,13 +391,15 @@ assert(review.includes("批量审核通过") && review.includes("批量退回修
 assert(!review.includes("data-review-date-start") && !review.includes("data-review-date-end") && review.includes("输入关键词或提交人搜索"), "审核工作台仍显示提交日期筛选");
 assert(review.includes("<th>共享目标</th>") && review.includes("公司知识库"), "审核工作台缺少共享目标列");
 assert(review.includes("<th>所属部门</th>") && review.includes("供应链运营中心"), "审核工作台缺少提交人所属部门列");
-assert(review.indexOf("<th>提交人</th>") < review.indexOf("<th>共享目标</th>") && review.indexOf("<th>共享目标</th>") < review.indexOf("<th>所属部门</th>"), "审核工作台共享目标列顺序不正确");
+assert(review.indexOf("<th>提交人</th>") < review.indexOf("<th>所属部门</th>") && review.indexOf("<th>所属部门</th>") < review.indexOf("<th>共享目标</th>") && review.indexOf("<th>共享目标</th>") < review.indexOf("<th>提交时间</th>"), "审核工作台所属部门与共享目标列顺序不正确");
 assert(!review.includes("<th>类型</th>"), `审核工作台列表仍显示类型表头：${review.includes("<th>类型</th>")}`);
 assert(!review.includes('class="col-type"'), `审核工作台列表仍显示类型列定义：${review.includes('class="col-type"')}`);
 assert(!review.includes("<td>文档</td>"), `审核工作台列表仍显示类型单元格：${review.includes("<td>文档</td>")}`);
-assert(review.includes('<td>张三</td><td class="review-shared-target-cell">公司知识库</td><td>供应链运营中心</td>'), "审核工作台提交人、共享目标和所属部门数据未按表头顺序对齐");
+assert(review.includes('<td>张三</td><td>供应链运营中心</td><td class="review-shared-target-cell">公司知识库</td>'), "审核工作台提交人、所属部门和共享目标数据未按表头顺序对齐");
+assert(review.includes('<col class="col-owner"><col class="col-department"><col class="col-shared-target"><col class="col-time">'), "审核工作台列宽定义未按所属部门、共享目标顺序排列");
 assert(!review.includes('class="suite-topbar"'), "审核工作台仍显示重复顶栏面包屑");
-assert(review.includes('class="col-shared-target"') && review.includes('class="col-department"') && /\.table-review \.col-actions\s*\{[^}]*width:\s*19%/.test(suiteStyles), "审核工作台操作列未保留最右侧空间");
+assert(review.includes('class="col-shared-target"') && review.includes('class="col-department"') && /\.table-review \.col-actions\s*\{[^}]*width:\s*17\.5%/.test(suiteStyles), "审核工作台中间字段未整体右移或操作列空间不正确");
+assert(/\.review-tabs\s*\{[^}]*padding-left:\s*0/.test(suiteStyles), "审核工作台状态页签未与下方内容容器左边界对齐");
 assert(/\.table-review td:last-child\s*\{[^}]*text-align:\s*right/.test(suiteStyles) && /\.table-review td:last-child \.review-row-actions\s*\{[^}]*justify-content:\s*flex-end/.test(suiteStyles), "审核工作台操作内容未靠右对齐");
 const pendingReviewRow = review.match(/<tr[^>]*data-review-status="待审核"[\s\S]*?<\/tr>/);
 const passedReviewRow = review.match(/<tr[^>]*data-review-status="已通过"[\s\S]*?<\/tr>/);
@@ -305,14 +407,19 @@ assert(pendingReviewRow && pendingReviewRow[0].includes("查看申请") && pendi
 assert(pendingReviewRow && (pendingReviewRow[0].match(/class="text-action/g) || []).length === 3 && !pendingReviewRow[0].includes('class="btn'), "审核工作台行内操作仍显示按钮边框或背景");
 assert(/\.review-row-actions \.text-action:focus-visible\s*\{[^}]*outline:\s*2px solid/.test(suiteStyles), "审核工作台无边框行内操作缺少键盘焦点反馈");
 assert(passedReviewRow && !passedReviewRow[0].includes("审核通过") && !passedReviewRow[0].includes("退回修改"), "已处理记录仍提供重复审核操作");
+assert(review.includes('id="reviewReturnModal"') && review.includes('id="reviewReturnForm"') && review.includes('id="reviewReturnReason"') && review.includes('退回理由 <em>选填</em>') && review.includes('maxlength="300"'), "退回修改缺少选填理由弹窗或字数限制");
+assert(suiteSource.includes("reviewDecision.dataset.reviewDecision==='退回'") && suiteSource.includes("openReviewReturnModal(reviewDecision,[reviewIndex])") && suiteSource.includes("openReviewReturnModal(reviewBulk,reviewIndices)") && suiteSource.includes("submitReviewReturn()"), "单条、详情或批量退回未统一进入理由弹窗");
+assert(suiteSource.includes("reviewItems[index].returnReason=reason") && suiteSource.includes("if(reviewReturnModal&&!reviewReturnModal.hidden){closeReviewReturnModal();return}"), "退回理由未保存，或 Esc 未优先关闭退回弹窗");
+assert(/\.review-return-modal\s*\{[^}]*z-index:\s*140/.test(suiteStyles) && /\.review-return-field textarea\s*\{[^}]*min-height:\s*120px/.test(suiteStyles) && /\.review-return-submit\s*\{[^}]*color:\s*#fff[^}]*background:\s*#c93640/.test(suiteStyles), "退回理由弹窗层级、文本域或危险主操作样式不完整");
 assert(review.includes('id="reviewDrawer"') && review.includes("知识基本信息") && review.includes("知识速读") && review.includes("入库位置"), "审核申请详情抽屉内容不完整");
 assert(review.indexOf("入库位置") < review.indexOf("知识基本信息") && (review.match(/class="review-target-path/g) || []).length >= 2, "审核申请详情未在基本信息前展示两条入库目录");
 assert(/\.review-drawer\s*\{[^}]*position:\s*fixed[^}]*width:\s*min\(480px/i.test(suiteStyles), "审核申请详情未使用 480px 右侧抽屉");
 
 const management = render("management");
-["知识统计", "知识管理", "目录管理", "上传任务", "共享管理", "回收站", "管理日志"].forEach((tab) => {
+["知识统计", "知识管理", "上传任务", "共享管理", "回收站", "管理日志"].forEach((tab) => {
   assert(management.includes(`>${tab}<`), `部门知识库管理缺少${tab}页签`);
 });
+assert(!management.includes('href="department-directory-management.html"') && !management.includes('>目录管理</a>'), "部门知识库管理仍展示目录管理页签");
 assert(management.includes("部门知识总量") && management.includes("本月新增") && management.includes("AI 引用次数"), "部门知识统计三项指标不完整");
 assert(management.includes("<strong>32 <small>篇</small></strong>") && !management.includes("<strong>+32 <small>篇</small></strong>"), "部门知识统计本月新增仍显示加号");
 assert(!management.includes("本月访问量"), "部门知识统计仍包含已移除的本月访问量卡片");
@@ -345,6 +452,13 @@ assert(departmentKnowledgeManagement.includes('class="scoped-knowledge-dir scope
 assert(departmentKnowledgeManagement.includes("data-management-table") && departmentKnowledgeManagement.includes("data-select-all") && (departmentKnowledgeManagement.includes("scoped-folder-table") || departmentKnowledgeManagement.includes("scoped-file-table")), "部门知识管理缺少标准列表或列表全选");
 assert(departmentKnowledgeManagement.includes("调整所属目录") && departmentKnowledgeManagement.includes("下架") && departmentKnowledgeManagement.includes("删除") && departmentKnowledgeManagement.includes("新建文件夹"), "部门知识管理批量操作未与公司知识管理对齐");
 assert(departmentKnowledgeManagement.includes("data-filter-display>类型</span>") && departmentKnowledgeManagement.includes("data-filter-display>状态</span>"), "部门知识管理筛选默认文案不正确");
+assert(departmentKnowledgeManagement.includes('data-library-time-filter') && departmentKnowledgeManagement.includes('data-filter-display>上传时间</span>'), "部门知识管理缺少上传时间下拉筛选");
+assert(!departmentKnowledgeManagement.includes('publish-date-range') && !departmentKnowledgeManagement.includes('data-publish-date-start') && !departmentKnowledgeManagement.includes('data-publish-date-end'), "部门知识管理仍显示发布时间范围筛选");
+assert([">全部</option>", ">今天</option>", ">近7天</option>", ">近30天</option>", ">本季度</option>", ">今年</option>", ">去年</option>"].every((option) => departmentKnowledgeManagement.includes(option)), "部门知识管理上传时间选项不完整");
+assert(suiteSource.includes('data-upload-date="') && suiteSource.includes("applyTableFilters()}else"), "部门知识管理上传日期数据或目录切换后的筛选联动缺失");
+assert(suiteSource.includes("function scopedKnowledgeFileActions(scope,item)") && suiteSource.includes("data-management-file-more") && suiteSource.includes("data-management-menu-delete"), "部门知识管理未采用三个常用操作加更多菜单的结构");
+assert(suiteSource.includes("scope==='department'?'<button class=\"more-action\"") && suiteSource.includes("overflowMenuTargetRow=isManagementFile?trigger.closest('tr'):null"), "部门知识管理更多菜单未绑定当前知识行");
+assert(suiteStyles.includes(".overflow-menu button.danger") && suiteStyles.includes("background: #fff1f2"), "部门知识管理更多菜单缺少删除危险态样式");
 assert(departmentKnowledgeManagement.includes('id="managementConfirm"'), "部门知识管理删除操作缺少确认弹窗");
 assert(departmentKnowledgeManagement.includes('class="company-knowledge-path"') && departmentKnowledgeManagement.includes('data-knowledge-scope="department"'), "部门知识管理缺少部门语义的当前目录路径");
 assert(!departmentKnowledgeManagement.includes('data-filter-key="directory"') && !departmentKnowledgeManagement.includes("<th>所属目录</th>") && !departmentKnowledgeManagement.includes("<th>类型</th>"), "部门知识管理仍保留旧目录下拉或旧列表字段");
@@ -374,7 +488,7 @@ const professionalManagement = render("professional-management");
   assert(professionalManagement.includes(`>${tab}<`), `专业目录管理缺少${tab}页签`);
 });
 assert(!professionalManagement.includes(">上传任务<") && !professionalManagement.includes(">共享管理<"), "专业目录管理页签范围不正确");
-assert(professionalManagement.includes("专业知识总量") && professionalManagement.includes(">745 <") && professionalManagement.includes(">+45 <") && professionalManagement.includes(">945 <"), "专业目录统计指标不正确");
+assert(professionalManagement.includes("专业知识总量") && professionalManagement.includes(">745 <") && professionalManagement.includes(">45 <") && !professionalManagement.includes(">+45 <") && professionalManagement.includes(">945 <"), "专业目录统计指标不正确");
 assert(professionalManagement.includes("按公司专业一级目录统计") && professionalManagement.includes("1 / 2"), "专业目录知识分布口径或分页不正确");
 assert(professionalManagement.includes('data-ranking-metric="AI引用次数"'), "专业知识排行榜缺少AI引用次数视图");
 assert(professionalManagement.includes('viewBox="0 0 1080 290"'), "公司知识库专业目录使用趋势未适配全宽布局");
@@ -389,7 +503,7 @@ const companyManagement = render("company-management");
   assert(companyManagement.includes(`>${tab}<`), `公司知识库管理缺少${tab}页签`);
 });
 assert(companyManagement.includes("上传知识") && companyManagement.includes('id="companyUploadModal"'), "公司知识库管理缺少上传入口或上传弹窗");
-assert(companyManagement.includes("公司知识总量") && companyManagement.includes(">5679 <") && companyManagement.includes(">+79 <") && companyManagement.includes(">1345 <"), "公司知识统计指标不正确");
+assert(companyManagement.includes("公司知识总量") && companyManagement.includes(">5679 <") && companyManagement.includes(">79 <") && !companyManagement.includes(">+79 <") && companyManagement.includes(">1345 <"), "公司知识统计指标不正确");
 assert(companyManagement.includes("company-stats-page"), "公司知识统计缺少部门卡片样式作用域");
 assert(/\.department-stats-page \.management-stats \.metric-card,\s*\.company-stats-page \.management-stats \.metric-card\s*\{[^}]*display:\s*flex[^}]*gap:\s*14px[^}]*padding:\s*16px 18px/.test(suiteStyles), "公司知识统计卡片未复用部门卡片布局");
 assert(/\.department-stats-page \.metric-icon,\s*\.company-stats-page \.metric-icon\s*\{[^}]*width:\s*52px[^}]*height:\s*52px/.test(suiteStyles), "公司知识统计图标尺寸未与部门卡片一致");
@@ -450,9 +564,12 @@ assert(companyUploads.includes("文件大小") && companyUploads.includes("当�
 assert(companyUploads.includes("data-filter-display>类型</span>") && companyUploads.includes("data-filter-display>上传时间</span>"), "公司上传任务筛选默认文案不正确");
 const myUploadsVisual = render("uploads");
 assert(myUploadsVisual.includes("全部（32）") && myUploadsVisual.includes("处理中（4）") && myUploadsVisual.includes("待确认（8）") && myUploadsVisual.includes("已完成（17）") && myUploadsVisual.includes("异常（3）"), "我的上传状态切换栏结构不完整");
-assert(/body\[data-page="uploads"\] \.status-tabs\s*\{[\s\S]*?border-bottom:\s*1px solid/.test(suiteStyles) && /body\[data-page="uploads"\] \.status-tabs button\.is-active\s*\{[\s\S]*?color:\s*var\(--color-primary\)/.test(suiteStyles), "我的上传状态切换栏未使用主题色标签样式");
-assert(/body\[data-page="uploads"\] \.status-tabs button \+ button\s*\{[\s\S]*?border-left:\s*1px solid/.test(suiteStyles), "我的上传状态切换栏缺少标签分隔线");
-assert(/body\[data-page="uploads"\] \.status-tabs\s*\{[\s\S]*?justify-content:\s*flex-start/.test(suiteStyles) && /body\[data-page="uploads"\] \.status-tabs button\s*\{[\s\S]*?flex:\s*0 0 148px/.test(suiteStyles), "我的上传状态切换栏未向左集中排列");
+assert(myUploadsVisual.includes('class="status-tabs" role="group" aria-label="上传状态"') && myUploadsVisual.includes('aria-pressed="true" data-upload-tab="all"') && (myUploadsVisual.match(/aria-pressed="false"/g) || []).length === 4, "我的上传状态页签缺少可访问的选中状态");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs,\s*body\[data-page="uploads"\] \.status-tabs,\s*body\[data-page="sharing"\] \.status-tabs\s*\{[^}]*height:\s*56px[^}]*justify-content:\s*flex-start[^}]*gap:\s*32px[^}]*border-bottom:\s*1px solid #dfe6e4[^}]*border-radius:\s*0[^}]*background:\s*#fff/.test(suiteStyles), "我的上传状态页签未复用白底轻量页签容器样式");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs button,\s*body\[data-page="uploads"\] \.status-tabs button,\s*body\[data-page="sharing"\] \.status-tabs button\s*\{[^}]*flex:\s*0 0 auto[^}]*font-size:\s*16px/.test(suiteStyles), "我的上传状态页签未使用内容宽度或 16px 字号");
+assert(/body\[data-page="collaboration"\] \.collaboration-tabs button\.is-active,\s*body\[data-page="uploads"\] \.status-tabs button\.is-active,\s*body\[data-page="sharing"\] \.status-tabs button\.is-active\s*\{[^}]*color:\s*var\(--color-primary\)[^}]*font-weight:\s*600/.test(suiteStyles) && /body\[data-page="collaboration"\] \.collaboration-tabs button\.is-active::after,\s*body\[data-page="uploads"\] \.status-tabs button\.is-active::after,\s*body\[data-page="sharing"\] \.status-tabs button\.is-active::after\s*\{[^}]*height:\s*3px[^}]*background:\s*var\(--color-primary\)/.test(suiteStyles), "我的上传当前页签未使用项目主色文字与 3px 短下划线");
+assert(!/body\[data-page="uploads"\] \.status-tabs button \+ button\s*\{[^}]*border-left/.test(suiteStyles) && !/body\[data-page="uploads"\] \.status-tabs button\s*\{[^}]*flex:\s*0 0 148px/.test(suiteStyles), "我的上传状态页签仍保留竖向分隔线或等宽分段");
+assert(suiteSource.includes("button.setAttribute('aria-pressed',String(isSelected))") && suiteSource.includes("uploadTable.dataset.uploadFilter=uploadTab.dataset.uploadTab"), "我的上传页签切换未同步可访问状态或列表筛选");
 assert(suiteSource.includes("scopedRankingRows(rankingBody.dataset.rankingScope,rankingMetric.dataset.rankingMetric)"), "专业或公司排行榜指标切换未实际重排数据");
 assert(suiteSource.includes("scopedDistributionMarkup(distributionScope"), "专业或公司知识分布分页未实际更新内容");
 assert(suiteSource.includes("data-confirm-company-upload") && suiteSource.includes("data-remove-upload-file"), "公司上传弹窗缺少确认或移除文件交互");
@@ -507,6 +624,7 @@ assert(sidebarSource.includes("children.hidden = !expanded") && !/toggleNode\(it
 assert(sidebarSource.includes("level === 0 ? 18 : 14") && sidebarSource.includes('"chevronRight", { size: 13 }'), "侧栏图标尺寸未按新规范缩小");
 const departmentPage = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "department-library.html"), "utf8");
 const departmentKnowledgePage = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "knowledge-management.html"), "utf8");
+assert(departmentKnowledgePage.includes("suite.css?v=2.101.0") && departmentKnowledgePage.includes("suite.js?v=2.101.0"), "部门知识管理静态资源版本未升级至 2.101.0");
 const companyPage = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "company-library.html"), "utf8");
 const reviewPage = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "review-workbench.html"), "utf8");
 const compatibleReviewPage = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", "my-approvals.html"), "utf8");
@@ -519,6 +637,15 @@ const departmentManagementPages = [
   "department-sharing-management.html",
   "department-recycle-bin.html",
   "department-management-log.html"
+];
+const departmentManagementTabPages = [
+  ["management", "知识统计"],
+  ["manage-knowledge", "知识管理"],
+  ["department-upload-tasks", "上传任务"],
+  ["department-sharing-management", "共享管理"],
+  ["department-recycle", "回收站"],
+  ["department-management-log", "管理日志"],
+  ["department-directory", null]
 ];
 const departmentAdminPages = [
   "library-management.html",
@@ -558,8 +685,16 @@ const suiteScript = fs.readFileSync(path.join(projectRoot, "pages", "prototype-s
   "国家电网有限公司数据管理办法.docx",
   "国家电网公司信息系统运行管理办法.docx"
 ].forEach((fileName) => assert(suiteScript.includes(fileName), `公司知识库缺少参考图文件：${fileName}`));
-assert(suiteScript.includes("files=isCompany?companyDocs:departmentDocuments(directory)"), "公司知识库未使用独立参考图文件数据");
+assert(suiteScript.includes("var source=scope==='company'?companyDocs:docs") && suiteScript.includes("function libraryDirectFiles"), "部门和公司知识库未使用各自文件数据或目录驱动文件范围");
 assert(departmentManagementPage.includes('active="department-library-management"'), "部门管理入口未正确高亮");
+departmentManagementTabPages.forEach(([pageName, activeLabel]) => {
+  const html = render(pageName);
+  const tabs = html.match(/<nav class="suite-tabs management-tabs" aria-label="部门知识库管理">[\s\S]*?<\/nav>/);
+  assert(tabs, `${pageName} 缺少部门知识库管理页签`);
+  assert(!tabs[0].includes('department-directory-management.html') && !tabs[0].includes('>目录管理</a>'), `${pageName} 仍展示部门目录管理页签`);
+  ["知识统计", "知识管理", "上传任务", "共享管理", "回收站", "管理日志"].forEach((label) => assert(tabs[0].includes(`>${label}</a>`), `${pageName} 缺少${label}页签`));
+  if (activeLabel) assert(tabs[0].includes(`>${activeLabel}</a>`), `${pageName} 当前页签状态不正确`);
+});
 assert(directoryPage.includes('active="professional-directory-management"'), "专业目录入口未正确高亮");
 [...departmentAdminPages, ...companyAdminPages].forEach((pageName) => {
   const pageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", pageName), "utf8");
@@ -572,14 +707,35 @@ managementChildren.forEach(([key, label]) => {
 });
 assert(suiteScript.includes('"professional-directory-management":"directory-management.html"'), "专业目录管理兼容地址映射已丢失");
 assert(departmentPage.includes('active="dept-architecture-management"'), "部门知识库未保留当前架构管理目录选中状态");
-assert(departmentPage.includes('suite.css?v=2.36.1'), "部门知识库未刷新操作列表头样式版本");
-assert(departmentKnowledgePage.includes('suite.css?v=2.37.0') && departmentKnowledgePage.includes('suite.js?v=2.37.0') && departmentKnowledgePage.includes('icons.js?v=1.1.0'), "部门知识管理未刷新路径或位置图标资源版本");
+assert(departmentPage.includes('suite.css?v=2.97.0') && departmentPage.includes('suite.js?v=2.97.0'), "部门知识库未刷新普通用户操作权限资源版本");
+assert(companyPage.includes('suite.css?v=2.97.0') && companyPage.includes('suite.js?v=2.97.0'), "公司知识库未刷新 3px 搜索框圆角资源版本");
+assert(departmentKnowledgePage.includes('suite.css?v=2.101.0') && departmentKnowledgePage.includes('suite.js?v=2.101.0') && departmentKnowledgePage.includes('icons.js?v=1.1.0'), "部门知识管理未刷新紧凑行操作资源版本");
+[
+  "library-management.html",
+  "department-directory-management.html",
+  "department-upload-tasks.html",
+  "department-sharing-management.html",
+  "department-recycle-bin.html",
+  "department-management-log.html"
+].forEach((pageName) => {
+  const pageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", pageName), "utf8");
+  assert(pageSource.includes('suite.js?v=2.97.0'), `${pageName} 未刷新部门管理页签资源版本`);
+});
 assert(companyPage.includes('active="company-core-business"'), "公司知识库未默认选中工作簿的首个一级目录");
 assert(reviewPage.includes('data-page="review"') && reviewPage.includes('active="review-workbench"'), "审核工作台兼容页未正确高亮");
 [reviewPage, compatibleReviewPage].forEach((pageSource) => {
   assert(/<bomp-header[^>]*user-name="审核员"/.test(pageSource), "审核工作台顶部栏未显示审核员身份");
-  assert(pageSource.includes('suite.css?v=2.38.2') && pageSource.includes('suite.js?v=2.38.2'), "审核工作台未刷新行内文字操作所需静态资源版本");
+  assert(pageSource.includes('suite.css?v=2.99.0') && pageSource.includes('suite.js?v=2.99.0'), "审核工作台未刷新页签对齐所需静态资源版本");
 });
+const reviewExtensionLabels = render("review");
+assert(reviewExtensionLabels.includes(">MP4</span>") && reviewExtensionLabels.includes(">PNG</span>"), "审核工作台未显示视频 MP4 或图片 PNG 真实扩展名");
+assert(reviewExtensionLabels.includes(">DOCX</span>") && reviewExtensionLabels.includes(">XLSX</span>"), "审核工作台的文档或表格图标仍未显示真实扩展名");
+assert(!/>(?:VID|IMG|AUD|W|X|P)</.test(reviewExtensionLabels), "审核工作台仍包含泛化文件类型缩写");
+assert(suiteSource.includes('match=name.match(/\\.([A-Za-z0-9]{1,5})$/)') && suiteSource.includes('video:"MP4",audio:"MP3",image:"PNG"'), "原型套件未按文件名解析扩展名或缺少类型兜底");
+assert(!suiteSource.includes('?"VID"') && !suiteSource.includes('?"IMG"') && !suiteSource.includes('?"AUD"'), "原型套件共享脚本仍生成泛化媒体类型缩写");
+assert(fileActionDialogsSource.includes('replace(/^\\./, "").toUpperCase()') && !fileActionDialogsSource.includes('return "IMG"'), "文件操作弹窗未显示真实扩展名");
+assert(knowledgeTableSource.includes('word: "DOCX"') && knowledgeTableSource.includes('video: "MP4"') && !knowledgeTableSource.includes('word: "W"'), "公共知识表格仍使用泛化文件类型缩写");
+assert(!departmentUploadSource.includes('.replace("XLSX", "X")') && departmentUploadSource.includes("escapeHtml(file.label)"), "部门知识上传流程仍压缩真实扩展名");
 
 const registry = JSON.parse(fs.readFileSync(path.join(projectRoot, "components", "registry.json"), "utf8"));
 const sidebarComponent = registry.components.find((item) => item.id === "app-sidebar");
@@ -591,10 +747,12 @@ sidebarComponent.usedBy.forEach((pagePath) => {
   assert(pageSource.includes("app-sidebar/component.js?v=4.5.1"), `${pagePath} 未引用最新版公共侧栏`);
 });
 const baseStylesComponent = registry.components.find((item) => item.id === "base-styles");
-assert(baseStylesComponent && baseStylesComponent.version === "2.3.0", "基础样式未登记为 2.3.0");
+assert(baseStylesComponent && baseStylesComponent.version === "2.4.0", "基础样式未登记为 2.4.0");
+assert(baseStyles.includes("--main-content-gutter: 10px"), "基础样式未登记 10px 主内容区外间距变量");
+assert(baseStyles.includes("body main.prototype-main") && baseStyles.includes("body main.prototype-main.suite-main"), "基础样式未统一覆盖普通页与原型套件主内容区外间距");
 baseStylesComponent.usedBy.forEach((pagePath) => {
   const pageSource = fs.readFileSync(path.join(projectRoot, pagePath), "utf8");
-  assert(pageSource.includes("base.css?v=2.3.0"), `${pagePath} 未引用最新版基础样式`);
+  assert(pageSource.includes("base.css?v=2.4.0"), `${pagePath} 未引用最新版基础样式`);
 });
 const historyPanelComponent = registry.components.find((item) => item.id === "search-history-panel");
 assert(historyPanelComponent && historyPanelComponent.version === "1.0.0", "搜索历史面板未登记或版本不正确");
@@ -648,14 +806,69 @@ assert(/\.table-downloads \.col-name\s*\{[^}]*width:\s*auto/.test(suiteStyles) &
 assert(/\.table-browsing \.time-cell,[\s\S]*?\.table-downloads \.time-cell\s*\{[^}]*overflow:\s*visible[^}]*white-space:\s*nowrap/.test(suiteStyles), "个人浏览或下载时间仍可能被截断");
 assert(suiteSource.includes("personalChecked.forEach") && suiteSource.includes("personalRow.remove()"), "个人浏览或下载删除未实现实际列表更新");
 const personalSharing = render("sharing");
-assert(personalSharing.includes("个人中心") && personalSharing.includes(">我的共享<") && personalSharing.includes("搜索共享记录"), "我的共享未展示本人发起的共享进度");
+assert(personalSharing.includes("我的知识库") && personalSharing.includes(">我的共享<") && personalSharing.includes("搜索共享记录"), "我的共享未展示本人发起的共享进度");
 assert((personalSharing.match(/class="suite-search"/g) || []).length === 1, "我的共享顶部搜索栏未移除");
+const personalSharingTopbar = personalSharing.slice(0, personalSharing.indexOf('<div class="suite-content">'));
+assert(!personalSharingTopbar.includes('personal-library-page-actions') && !personalSharingTopbar.includes('> 新建</button>') && !personalSharingTopbar.includes('> 上传</button>'), "我的共享顶部横条仍显示新建或上传");
 assert(personalSharing.includes('class="action-cell"') && /\.table-sharing \.col-name\s*\{[^}]*width:\s*auto/.test(suiteStyles) && /\.table-sharing \.col-location\s*\{[^}]*width:\s*20%/.test(suiteStyles) && /\.table-sharing \.col-time\s*\{[^}]*width:\s*16%/.test(suiteStyles) && /\.table-sharing \.col-actions\s*\{[^}]*width:\s*9%/.test(suiteStyles), "我的共享列宽未按信息优先级弹性分配");
+const personalFavorites = render("favorites");
+const personalFavoritesTopbar = personalFavorites.slice(0, personalFavorites.indexOf('<div class="suite-content">'));
+assert(!personalFavoritesTopbar.includes('personal-library-page-actions') && !personalFavoritesTopbar.includes('> 新建</button>') && !personalFavoritesTopbar.includes('> 上传</button>'), "我的收藏顶部横条仍显示新建或上传");
 const personalApprovals = render("approvals");
 assert(!personalApprovals.includes('class="suite-topbar"'), "审核工作台兼容页仍显示重复顶栏面包屑");
 assert(personalApprovals.includes("批量审核通过") && personalApprovals.includes("批量退回修改") && personalApprovals.includes("查看申请") && personalApprovals.includes('id="reviewDrawer"'), "我的审批未完整承接审核工作台内容");
 const personalUploads = render("uploads");
 assert((personalUploads.match(/class="suite-search"/g) || []).length === 1, "我的上传顶部搜索栏未移除");
+const personalLibraryTopbarPages = [
+  ["recent", "最近使用"],
+  ["knowledge", "我的知识"],
+  ["collaboration", "我的协作"],
+  ["favorites", "我的收藏"],
+  ["uploads", "我的上传"],
+  ["sharing", "我的共享"],
+  ["recycle", "回收站"]
+];
+personalLibraryTopbarPages.forEach(([page, label]) => {
+  const html = render(page);
+  assert(html.includes('class="suite-topbar personal-library-topbar"'), `${label}缺少我的知识库统一顶部横条`);
+  assert(html.includes(`<span>我的知识库</span><b>&gt;</b><strong>${label}</strong>`), `${label}顶部面包屑不正确`);
+  assert(html.includes('data-nav="document-search.html"') && html.includes("全局搜索"), `${label}缺少全局搜索入口`);
+  assert(html.includes('data-nav="qa-result.html"') && html.includes("AI问答"), `${label}缺少AI问答入口`);
+});
+assert(/\.personal-library-topbar\s*\{[^}]*position:\s*relative[^}]*z-index:\s*1/.test(suiteStyles) && !/\.personal-library-topbar\s*\{[^}]*position:\s*sticky/.test(suiteStyles), "我的知识库统一顶部横条仍使用悬浮或吸顶定位");
+assert(/body:is\([\s\S]*?\[data-page="recent"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-main\s*\{[^}]*padding-top:\s*var\(--header-height\)[^}]*padding-right:\s*0[^}]*padding-left:\s*0/.test(suiteStyles), "我的知识库页面主内容未与系统顶栏、侧栏及视口右边缘无缝贴合");
+assert(/body:is\([\s\S]*?\[data-page="recent"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-page\s*\{[^}]*border-top:\s*0[^}]*border-right:\s*0[^}]*border-left:\s*0/.test(suiteStyles), "我的知识库页面外壳仍可能在顶部横条周围形成边框缝隙");
+assert(/\[data-page="recent"\][\s\S]*?\[data-page="knowledge"\][\s\S]*?\) \.suite-content\s*\{[^}]*padding-left:\s*15px/.test(suiteStyles), "最近使用与我的知识未保留15px内容间距");
+assert(/\[data-page="collaboration"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-content\s*\{[^}]*padding:\s*32px 36px 28px 30px/.test(suiteStyles), "我的知识库白色工作区内容未同步左移");
+assert(/\[data-page="collaboration"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-content::before\s*\{[^}]*inset:\s*16px 20px 16px 15px/.test(suiteStyles), "我的知识库白色工作区未将左侧内容边界调整为15px");
+assert(/body:is\([\s\S]*?\[data-page="recent"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) main\.prototype-main\.suite-main\s*\{[^}]*padding-left:\s*0/.test(suiteStyles), "我的知识库顶部横条未贴齐左侧导航");
+[
+  "my-library.html",
+  "my-knowledge.html",
+  "my-collaboration.html",
+  "my-favorites.html",
+  "my-uploads.html",
+  "my-sharing.html",
+  "my-recycle-bin.html",
+  "sharing-statistics.html"
+].forEach((file) => {
+  const pageSource = fs.readFileSync(path.join(projectRoot, "pages", "prototype-suite", file), "utf8");
+  const resourceVersion = file === "my-uploads.html" ? "2.104.0" : "2.102.0";
+  assert(pageSource.includes(`suite.css?v=${resourceVersion}`) && pageSource.includes(`suite.js?v=${resourceVersion}`), `${file}未刷新我的知识库顶部与内容间距资源版本`);
+});
+assert(/body:is\([\s\S]*?\[data-page="recent"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-page,[\s\S]*?body:is\([\s\S]*?\[data-page="recent"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-content\s*\{[^}]*background:\s*#f7f8f8/.test(suiteStyles), "我的知识库页面未统一使用最近使用的浅灰画布背景");
+assert(/body:is\([\s\S]*?\[data-page="collaboration"\][\s\S]*?\[data-page="recycle"\][\s\S]*?\) \.suite-content::before\s*\{[^}]*inset:\s*16px 20px[^}]*border:\s*1px solid #e6ecea[^}]*border-radius:\s*6px[^}]*background:\s*#fff/.test(suiteStyles), "我的知识库常规页面缺少统一白色工作区底板");
+assert(/\.personal-library-topbar \.suite-crumb\s*\{[^}]*font-size:\s*13px/.test(suiteStyles), "我的知识库顶部面包屑未统一使用 13px 字号");
+assert(/<section class="recent-list-workspace" aria-label="最近使用列表">[\s\S]*?class="suite-toolbar"[\s\S]*?<div class="recent-table-panel">[\s\S]*?class="suite-table table-recent"[\s\S]*?class="pager"/.test(render("recent")), "最近使用的透明工具区或白色列表面板结构不正确");
+assert(/<section class="knowledge-summary"[\s\S]*?<section class="personal-library-list-panel" aria-label="我的知识列表">/.test(render("knowledge")), "我的知识摘要卡与列表卡顺序不正确");
+const renderedKnowledge = render("knowledge");
+const renderedKnowledgeNames = Array.from(renderedKnowledge.matchAll(/data-doc-name="([^"]+)"/g), match => match[1]);
+assert(renderedKnowledgeNames.slice(0, 2).join("|") === "项目资料|年度报告", "我的知识列表未将文件夹按创建时间倒序置顶");
+assert(renderedKnowledgeNames.slice(2).join("|") === ["供应链运营中心年度重点工作任务清单.docx","供应链运营季度运行分析报告.docx","供应商管理优秀实践案例集.pdf","供应链重点项目复盘报告.docx","数智供应链建设阶段性工作总结.pptx","数字化项目建设任务进度表.xlsx","物资采购业务培训课程录像.mp4","供应商履约评价专题会议录音.mp3","供应链运营指标驾驶舱截图.png"].join("|"), "我的知识文件未按创建时间从新到旧排列");
+assert(/\.knowledge-summary\s*\{[^}]*margin-bottom:\s*15px/.test(suiteStyles) && /\.personal-library-list-panel\s*\{[^}]*padding:\s*0 16px 12px[^}]*border:\s*1px solid #e6ecea[^}]*border-radius:\s*6px[^}]*background:\s*#fff/.test(suiteStyles), "我的知识摘要卡间距或统一列表容器样式不正确");
+assert(/\.recent-list-workspace\s*\{[^}]*background:\s*transparent/.test(suiteStyles) && /\.recent-list-workspace > \.suite-toolbar\s*\{[^}]*margin-bottom:\s*12px[^}]*background:\s*transparent/.test(suiteStyles) && /\.recent-table-panel\s*\{[^}]*padding:\s*0 0 12px[^}]*border:\s*1px solid #e6ecea[^}]*border-right:\s*0[^}]*border-left:\s*0[^}]*border-radius:\s*6px[^}]*background:\s*#fff/.test(suiteStyles), "最近使用未采用透明工具区或全宽表格的无左右竖线列表面板");
+assert(/\.recent-table-panel > \.pager\s*\{[^}]*padding-right:\s*16px[^}]*padding-left:\s*16px/.test(suiteStyles), "最近使用全宽表格调整后分页未保留左右留白");
+assert(/\.table-recent td\s*\{[^}]*border-top-color:\s*#eef2f1/.test(suiteStyles), "最近使用列表内部横向分隔线未减淡");
 assert(/\.suite-table th:last-child,[\s\S]*?\.suite-table \.action-cell\s*\{[^}]*overflow:\s*visible[^}]*white-space:\s*nowrap/.test(suiteStyles), "全局列表操作列未设置完整单行展示");
 assert(/\.suite-table th,[\s\S]*?padding-right:\s*12px[^}]*padding-left:\s*12px/.test(suiteStyles), "全局表格列间距未统一");
 assert(/--table-cell-padding-inline:\s*12px/.test(baseStyles) && /--table-action-edge-gap:\s*28px/.test(baseStyles), "全局表格间距变量未统一登记");
@@ -678,7 +891,15 @@ assert(/\.file-selection-table th:last-child,[\s\S]*?padding-right:\s*var\(--tab
   "department-recycle", "company-knowledge", "company-upload-tasks", "company-sharing", "company-recycle"
 ].forEach((page) => assertBusinessTableOrder(render(page), page));
 const personalRecycle = render("recycle");
-assert(personalRecycle.includes(">回收站<") && personalRecycle.includes("恢复") && personalRecycle.includes("彻底删除") && personalRecycle.includes("保留期限：30天"), "个人中心回收站内容不完整");
+assert(!personalRecycle.includes('class="page-intro"') && !personalRecycle.includes("保留期限：30天") && personalRecycle.includes("恢复") && personalRecycle.includes("彻底删除"), "个人中心回收站仍包含多余介绍区或缺少批量操作");
+assert(personalRecycle.includes('data-recycle-selected role="status" aria-live="polite" aria-atomic="true">已选中 0 条</span>'), "回收站工具栏缺少可访问的已选数量");
+assert((personalRecycle.match(/data-recycle-bulk/g) || []).length === 2 && personalRecycle.includes('data-recycle-bulk disabled data-toast="所选文件已恢复到原位置"') && personalRecycle.includes('data-recycle-bulk disabled data-toast="所选文件已彻底删除"'), "回收站恢复或彻底删除缺少默认禁用态");
+assert(personalRecycle.indexOf("data-recycle-selected") < personalRecycle.indexOf('data-toast="所选文件已恢复到原位置"') && personalRecycle.indexOf('data-toast="所选文件已恢复到原位置"') < personalRecycle.indexOf('data-toast="所选文件已彻底删除"'), "回收站左侧选择状态或批量按钮顺序不正确");
+assert(/class="toolbar-right">[\s\S]*?data-filter-key="type"[\s\S]*?data-time-filter[\s\S]*?placeholder="搜索回收站文件"[\s\S]*?<\/div><\/div>/.test(personalRecycle), "回收站类型、删除时间或搜索未放在工具栏右侧");
+assert(!personalRecycle.includes('class="view-switch"') && !personalRecycle.includes('title="列表视图"') && !personalRecycle.includes('title="宫格视图"'), "回收站仍显示列表或宫格视图选择");
+assert(personalRecycle.includes("data-recycle-table") && personalRecycle.includes("data-select-all") && (personalRecycle.match(/data-row-select/g) || []).length >= 6, "回收站缺少全选框、行复选框或选择状态标识");
+assert(suiteSource.includes("recycleSelected.textContent='已选中 '+checked.length+' 条'") && suiteSource.includes("document.querySelectorAll('[data-recycle-bulk]').forEach"), "回收站已选数量或批量按钮未接入勾选状态");
+assert(!/personalLibraryTopbar\("回收站"\s*,/.test(suiteSource), "回收站顶部横条仍重复提供页面级批量操作");
 assert(registry.components.find((item) => item.id === "app-sidebar").version === "4.5.1", "侧栏组件版本未更新");
 
 assert(suiteSource.includes("function tableColgroup(columns)") && suiteSource.includes("table-library") && suiteSource.includes("management-generic-table"), "原型文件列表缺少语义列定义");
@@ -688,6 +909,7 @@ assert(knowledgeTableSource.includes('class="col-name"') && /\.col-name\s*\{[^}]
 assert(!knowledgeTableSource.includes('class="col-more"') && /<th>操作<\/th>/.test(knowledgeTableSource), "公共知识表格仍将更多操作拆为独立空白列");
 assert(/\.file-title\s*\{[^}]*text-overflow:\s*ellipsis[^}]*white-space:\s*nowrap/.test(knowledgeTableStyles), "公共知识表格名称未保持单行省略");
 assert(/th:last-child,[\s\S]*?td:last-child\s*\{[^}]*padding-right:\s*var\(--table-action-edge-gap, 28px\)[^}]*text-align:\s*right/.test(knowledgeTableStyles), "公共知识表格操作列未遵循右端间距");
-assert(registry.components.find((item) => item.id === "knowledge-table").version === "1.4.0", "公共知识表格组件版本未更新");
+assert(registry.components.find((item) => item.id === "knowledge-table").version === "1.5.0", "公共知识表格组件版本未更新");
+assert(registry.components.find((item) => item.id === "file-action-dialogs").version === "1.1.0", "文件操作弹窗组件版本未更新");
 
 console.log("Prototype suite verification passed.");

@@ -513,8 +513,9 @@
   justify-content: center;
   border-radius: 4px;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 8px;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .doc-icon-word { background: #2f7de1; }
@@ -965,7 +966,7 @@
 .back-button { display: inline-flex; height: 32px; align-items: center; gap: 5px; padding: 0; border: 0; color: var(--color-primary); background: transparent; cursor: pointer; font: inherit; }
 .detail-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin: 10px 0 18px; padding: 20px; border: 1px solid #e0e7e6; border-radius: 8px; background: #ffffff; }
 .detail-title-block { display: flex; min-width: 0; align-items: flex-start; gap: 14px; }
-.detail-file-icon { display: inline-flex; width: 42px; height: 48px; flex: 0 0 42px; align-items: center; justify-content: center; border-radius: 6px; color: #ffffff; background: #357bd2; font-size: 15px; font-weight: 700; }
+.detail-file-icon { display: inline-flex; width: 42px; height: 48px; flex: 0 0 42px; align-items: center; justify-content: center; border-radius: 6px; color: #ffffff; background: #357bd2; font-size: 11px; font-weight: 700; letter-spacing: 0; }
 .detail-title-block p { margin: 0 0 4px; color: var(--color-primary); font-size: 12px; }
 .detail-title-block h1 { max-width: 780px; margin: 0; color: var(--color-title); font-size: 20px; line-height: 1.5; }
 .detail-actions { display: flex; flex: 0 0 auto; gap: 8px; }

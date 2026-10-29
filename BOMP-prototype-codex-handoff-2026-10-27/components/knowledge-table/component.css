@@ -103,8 +103,9 @@ input[type="checkbox"] {
   justify-content: center;
   border-radius: 4px 4px 4px 2px;
   color: #ffffff;
-  font-size: 11px;
+  font-size: 8px;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .file-icon-word { background: #2f7de1; }

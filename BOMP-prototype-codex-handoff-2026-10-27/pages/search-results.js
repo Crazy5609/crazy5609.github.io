@@ -108,7 +108,7 @@
     byId("detailNumber").textContent = row.id;
     byId("detailTitle").textContent = row.title;
     byId("documentPreviewTitle").textContent = row.title.replace(/[《》]/g, "");
-    byId("detailFileIcon").textContent = row.format === "pdf" ? "P" : row.format === "ppt" ? "P" : "W";
+    byId("detailFileIcon").textContent = ({ pdf: "PDF", ppt: "PPTX", excel: "XLSX", image: "PNG", video: "MP4", audio: "MP3" })[row.format] || "DOCX";
     byId("detailType").textContent = row.type;
     byId("detailScope").textContent = row.scope;
     byId("detailKnowledgeType").textContent = row.knowledgeType;
